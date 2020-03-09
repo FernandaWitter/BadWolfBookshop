@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a></li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -157,12 +158,14 @@
         <div class="center-block m-l-40 m-r-40" id="content">
             <h2 class="text-center">EXCLUIR A CONTA?</h2>
             <div class="m-t-40"></div>
-            <h3>Tem certeza que deseja excluir sua conta? N&atilde;o ser&aacute; mais  poss&iacute;vel realizar compras, e todos os produtos salvos no seu carrinho ser&atilde;o perdidos. E, mais importante, n&atilde;o queremos que voc&ecirc; se v&aacute;!</h3>
-                <div class="m-t-40"></div>
+            <h3>Tem certeza que deseja excluir sua conta? N&atilde;o ser&aacute; mais poss&iacute;vel realizar compras,
+                e todos os produtos salvos no seu carrinho ser&atilde;o perdidos. E, mais importante, n&atilde;o
+                queremos que voc&ecirc; se v&aacute;!</h3>
+            <div class="m-t-40"></div>
             <div class="buttons clearfix">
                 <div class="pull-left"><a href="index.jsp" class="btn btn-default">Cancelar</a></div>
                 <div class="pull-right">
-                    <input type="submit" value="Excluir Conta" class="btn btn-danger" />
+                    <input type="submit" value="Excluir Conta" class="btn btn-danger"/>
                 </div>
             </div>
         </div>
@@ -175,7 +178,8 @@
             <div class="newslatter">
                 <form>
                     <h5>FIQUE POR DENTRO!</h5>
-                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos diretamente
+                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos
+                        diretamente
                         na sua caixa de entrada!</h4>
                     <div class="input-group">
                         <label hidden for="emailSubscription">Assinatura de newsletter por e-mail</label>

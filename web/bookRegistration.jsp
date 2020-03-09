@@ -94,7 +94,7 @@
         <div class="container" style="height:40px;"></div>
         <div class="center-block m-l-40 m-r-40" id="content">
             <h2 class="text-center">Cadastro/Edi&ccedil;&atilde;o de Produto</h2>
-            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="#">
+            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="productList.jsp">
                 <p>* Campos obrigat&oacute;rios</p>
                 <fieldset>
                     <legend>Produto</legend>
@@ -110,7 +110,7 @@
                         <label for="bookAuthor" class="col-sm-2 control-label">Autor*</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="bookAuthor"
-                                   placeholder="A outra informa&ccedil;&atilde;o importante da capa ou da lombada"
+                                   placeholder="A outra informa&ccedil;&atilde;o importante da capa ou da lombada, separados por ponto-e-v&iacute;rgula"
                                    value="" name="bookAuthor">
                         </div>
                     </div>
@@ -125,12 +125,12 @@
                     <div class="form-group required">
                         <label for="bookYear" class="col-sm-2 control-label">Ano*</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookYear"
+                            <input type="numeric" class="form-control" id="bookYear"
                                    placeholder="ex. 1995" value="" name="bookYear">
                         </div>
                         <label for="bookEdition" class="col-sm-1 control-label">Edi&ccedil;&atilde;o*</label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" id="bookEdition"
+                            <input type="numeric" class="form-control" id="bookEdition"
                                    placeholder="ex. 1" value="" name="bookEdition">
                         </div>
                         <label for="bookLanguage" class="col-sm-1 control-label">Idioma*</label>
@@ -144,13 +144,6 @@
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="bookISBN"
                                    placeholder="ex. 978-1338306125" value="" name="bookISBN">
-                        </div>
-                    </div>
-                    <div class="form-group required">
-                        <label for="bookBarCode" class="col-sm-2 control-label">ISBN*</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="bookBarCode"
-                                   placeholder="ex. 978-1338306125" value="" name="bookBarCode">
                         </div>
                     </div>
                     <div class="form-group required">
@@ -243,8 +236,8 @@
                 <div class="m-t-40"></div>
                 <div class="buttons">
                     <div class="pull-right">
-<%--                        <input type="submit" class="btn btn-primary" value="Salvar">--%>
-                        <a class="btn btn-primary" href="productList.jsp">Salvar</a>
+                        <input type="submit" class="btn btn-primary" value="Salvar">
+<%--                        <a class="btn btn-primary" href="productList.jsp">Salvar</a>--%>
                     </div>
                 </div>
             </form>

@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -366,7 +367,7 @@
         $('.parallax').parallax();
         var addCard = $('#addCard');
         var cardWrapper = $('#new-card-wrapper');
-        var cardFieldHTML = '<div id="card-form" class="m-t-40">\n' +
+        var cardFieldHTML = '<hr/><div id="card-form" class="m-t-40">\n' +
             '<form>\n' +
             '<div class="form-group">\n' +
             '<label for="cardCompany0" class="col-sm-3 control-label">Bandeira</label>\n' +

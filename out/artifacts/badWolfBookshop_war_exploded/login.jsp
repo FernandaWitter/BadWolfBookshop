@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -168,6 +169,35 @@
                     <a type="button" value="Login" id="button-login" data-loading-text="Loading..."
                        class="btn btn-primary" href="index.jsp">Login</a>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer-top-cms parallax-container">
+    <div class="parallax"><img src="resources/image/parallax1.jpg" alt="#"></div>
+    <div class="container">
+        <div class="row">
+            <div class="newslatter">
+                <form>
+                    <h5>FIQUE POR DENTRO!</h5>
+                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos diretamente
+                        na sua caixa de entrada!</h4>
+                    <div class="input-group">
+                        <label hidden for="emailSubscription">Assinatura de newsletter por e-mail</label>
+                        <input type="text" id="emailSubscription" class=" form-control"
+                               placeholder="Your-email@website.com">
+                        <button type="submit" value="Sign up" class="btn btn-large btn-primary">Inscreva-se!</button>
+                    </div>
+                </form>
+            </div>
+            <div class="footer-social">
+                <ul>
+                    <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li class="linkedin"><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                    <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li class="gplus"><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                    <li class="youtube"><a href="#"><i class="fa fa-youtube-play"></i></a></li>
+                </ul>
             </div>
         </div>
     </div>

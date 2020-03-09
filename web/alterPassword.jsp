@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -176,11 +177,14 @@
                     </div>
                 </fieldset>
                 <div class="m-t-40"></div>
-                <div class="buttons clearfix">
+                <div class="buttons">
+                    <div class="row">
+                        <div class="col-md-3"></div>
                     <div class="pull-left"><a href="index.jsp" class="btn btn-default">Cancelar</a></div>
-                    <div class="pull-right">
-<%--                        <input type="submit" value="Continuar" class="btn btn-primary" />--%>
+                    <div class="pull-right m-r-10">
+                        <%--                        <input type="submit" value="Continuar" class="btn btn-primary" />--%>
                         <a href="#" class="btn btn-primary">Continuar</a>
+                    </div>
                     </div>
                 </div>
             </form>

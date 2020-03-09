@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -1005,17 +1006,17 @@
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="category-page-wrapper">
-                                            <h2>Cupom de Troca</h2>
-                                            <p>Gerado em: 25/09/2019</p>
-                                            <p>V&aacute;lido at&eacute;: 25/09/2020</p>
-                                            <p>Valor total: <strong>$256.35</strong></p>
-                                            <a class="btn btn-primary">Utilizar Cupom</a>
+                                            <h2>Cupom de Promocional</h2>
+                                            <p><strong>C&oacute;digo</strong></p>
+                                            <input type="text" class="p-r-10 form-control text-white text-right m-r-10"
+                                                   value="" id="promoVoucher">
+                                            <a class="btn btn-primary m-t-40">Utilizar Cupom</a>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="category-page-wrapper selected-payment"
                                              style="background-color: #189b79; color: white;">
-                                            <h2 class="text-white" style="color: white;">Cupom de Devolu&ccedil;&atilde;o</h2>
+                                            <h2 class="text-white" style="color: white;">Cupom de Troca</h2>
                                             <p>Gerado em: 16/01/2020</p>
                                             <p>V&aacute;lido at&eacute;: 16/01/2021</p>
                                             <p>Valor total: <strong>$37.61</strong></p>
@@ -1066,7 +1067,7 @@
                                     <tr>
                                         <td class="text-center">Produto</td>
                                         <td class="text-left">Nome</td>
-                                        <td class="text-left">Quantidade</td>
+                                        <td class="text-right">Quantidade</td>
                                         <td class="text-right">Valor Unit&aacute;rio</td>
                                         <td class="text-right">Total</td>
                                     </tr>
@@ -1077,13 +1078,10 @@
                                         <td class="text-center"><a href="bookDetail.jsp"><img class="img-thumbnail"
                                                                                               title="Produto"
                                                                                               alt="Imagem do Produto"
-                                                                                              src="resources/image/cover-not-available-50x75.jpg"></a>
+                                                                                              src="resources/image/book-front-50x64.jpg"></a>
                                         </td>
                                         <td class="text-left"><a href="bookDetail.jsp">Livro</a></td>
-                                        <td class="text-left">
-                                            <div style="max-width: 200px;" class="input-group btn-block">
-                                                <input type="text" class="form-control quantity" size="1" value="1"
-                                                       name="quantity">
+                                        <td class="text-right"> 1 </td>
                                         <td class="text-right">$54.00</td>
                                         <td class="text-right">$54.00</td>
                                     </tr>
@@ -1262,7 +1260,7 @@
         $('.parallax').parallax();
         var addButton = $('#addCard');
         var wrapper = $('#new-card-wrapper');
-        var fieldHTML = '<div id="card-form" class="m-t-40">\n' +
+        var fieldHTML = '<hr/><div id="card-form" class="m-t-40">\n' +
             '<form>\n' +
             '<div class="form-group">\n' +
             '<div class="row">\n' +

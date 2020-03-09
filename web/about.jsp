@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -161,9 +162,9 @@
                     <div class="product-thumb">
                         <div class="image product-imageblock">
                             <a href="bookDetail.jsp">
-                                <img src="resources/image/cover-not-available-50x75.jpg" alt="Capa do Livro"
+                                <img src="resources/image/book-front-50x64.jpg" alt="Capa do Livro"
                                      title="Livro" class="img-responsive"/>
-                                <img src="resources/image/cover-not-available-150x225.jpg" alt="Livro"
+                                <img src="resources/image/book-front-150x192.jpg" alt="Livro"
                                      title="Livro" class="img-responsive"/>
                             </a>
                             <ul class="button-group grid-btn">

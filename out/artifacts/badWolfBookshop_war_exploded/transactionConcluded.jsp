@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a></li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -153,10 +154,10 @@
                     <div class="product-thumb">
                         <div class="image product-imageblock">
                             <a href="bookDetail.jsp">
-                                <img src="resources/image/cover-not-available-50x75.jpg" alt="iPod Classic"
-                                     title="iPod Classic" class="img-responsive"/>
-                                <img src="resources/image/cover-not-available-150x225.jpg" alt="iPod Classic"
-                                     title="iPod Classic" class="img-responsive"/>
+                                <img src="resources/image/book-front-50x64.jpg" alt="Capa do Livro"
+                                     title="Capa do Livro" class="img-responsive"/>
+                                <img src="resources/image/book-front-150x192.jpg" alt="Capa do Livro"
+                                     title="Capa do Livro" class="img-responsive"/>
                             </a>
                             <ul class="button-group grid-btn">
                                 <li>
@@ -200,8 +201,8 @@
                 </div>
                 <%}%>
             </div>
+        </div>
     </div>
-</div>
 </div>
 <div class="footer-top-cms parallax-container">
     <div class="parallax"><img src="resources/image/parallax1.jpg" alt="#"></div>
@@ -210,7 +211,8 @@
             <div class="newslatter">
                 <form>
                     <h5>FIQUE POR DENTRO!</h5>
-                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos diretamente
+                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos
+                        diretamente
                         na sua caixa de entrada!</h4>
                     <div class="input-group">
                         <label hidden for="emailSubscription">Assinatura de newsletter por e-mail</label>

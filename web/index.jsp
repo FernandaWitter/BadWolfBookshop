@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -141,16 +142,16 @@
 <div class="container m-t-40" style="height:10px;"></div>
 <div class="container">
     <div class="cms_banner">
-        <h3 class="productblock-title m-b-40 p-b-40">Destaques</h3>
+        <h3 class="productblock-title">Destaques</h3>
         <div class="row m-t-40">
             <%for (int i = 0; i < 12; i++) {%>
             <div class="product-layout  product-grid  col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <div class="item">
                     <div class="product-thumb">
                         <div class="image product-imageblock"><a href="bookDetail.jsp"> <img
-                                src="resources/image/cover-not-available.jpg" alt="Imagem do Livro"
+                                src="resources/image/book-front-400x600.jpg" alt="Imagem do Livro"
                                 title="T&iacute;tulo do Livro" class="img-responsive"/> <img
-                                src="resources/image/cover-not-available.jpg" alt="Capa do Livro"
+                                src="resources/image/book-front-400x600.jpg" alt="Capa do Livro"
                                 title="T&iacute;tulo do Livro" class="img-responsive"/> </a>
                             <ul class="button-group">
                                 <li>

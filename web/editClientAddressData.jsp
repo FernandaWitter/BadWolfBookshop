@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -553,36 +554,6 @@
     </div>
 </div>
 <footer>
-    <div class="cms_searvice">
-        <div class="container">
-            <div class="row">
-                <%--                <div class="col-md-3 ">--%>
-                <%--                    <div class="cms-block1 z-depth-5">--%>
-                <%--                        <h4>Frete Gr&aacute;tis</h4>--%>
-                <%--                        <p>Nas compras acima de $150</p>--%>
-                <%--                    </div>--%>
-                <%--                </div>--%>
-                <%--                <div class="col-md-3 ">--%>
-                <%--                    <div class="cms-block2">--%>
-                <%--                        <h4>30 Dias de Garantia</h4>--%>
-                <%--                        <p>Money Back Guarantee</p>--%>
-                <%--                    </div>--%>
-                <%--                </div>--%>
-                <%--                <div class="col-md-3 ">--%>
-                <%--                    <div class="cms-block3">--%>
-                <%--                        <h4>24/7 Support</h4>--%>
-                <%--                        <p>Feel free to Contact us</p>--%>
-                <%--                    </div>--%>
-                <%--                </div>--%>
-                <%--                <div class="col-md-3 ">--%>
-                <%--                    <div class="cms-block4">--%>
-                <%--                        <h4>Online Shopping </h4>--%>
-                <%--                        <p>Save Up to 70% on Store</p>--%>
-                <%--                    </div>--%>
-                <%--                </div>--%>
-            </div>
-        </div>
-    </div>
     <div class="container">
         <div class="row">
             <div class="col-sm-3 footer-block">

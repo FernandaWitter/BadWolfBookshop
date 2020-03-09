@@ -69,6 +69,7 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
@@ -186,7 +187,7 @@
                 <div class="columnblock-title">Filtrar Busca</div>
                 <div class="filter-block">
                     <div class="list-group">
-                        <p class="list-group-item">Encaderna&ccedil;o</p>
+                        <p class="list-group-item">Encadernamento</p>
                         <div class="list-group-item">
                             <div id="filter-group1">
                                 <label class="checkbox">
@@ -286,10 +287,10 @@
                     <div class="product-thumb">
                         <div class="image product-imageblock m-l-40 p-l-40">
                             <a href="bookDetail.jsp">
-                                <img src="resources/image/cover-not-available-50x75.jpg" alt="Livro"
-                                     title="iPod Classic" class="img-responsive"/>
-                                <img src="resources/image/cover-not-available-150x225.jpg" alt="Livro"
-                                     title="iPod Classic" class="img-responsive"/>
+                                <img src="resources/image/book-front-50x64.jpg" alt="Livro"
+                                     title="Capa do Livro" class="img-responsive"/>
+                                <img src="resources/image/book-front-150x192.jpg" alt="Livro"
+                                     title="Capa do Livro" class="img-responsive"/>
                             </a>
                             <ul class="button-group grid-btn">
                                 <li>

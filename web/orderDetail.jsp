@@ -113,7 +113,7 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/cover-not-available-50x75.jpg"></a>
+                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
                                 </div>
                                 <div class="col-sm-5">
                                     <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>
@@ -137,7 +137,7 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/cover-not-available-50x75.jpg"></a>
+                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
                                 </div>
                                 <div class="col-sm-5">
                                     <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>
@@ -161,7 +161,7 @@
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/cover-not-available-50x75.jpg"></a>
+                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
                                 </div>
                                 <div class="col-sm-5">
                                     <p><a href="bookDetail.jsp">T&iacute;tulo do Livro</a></p>

@@ -69,11 +69,14 @@
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
                                         <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a></li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
-                                                                                                    aria-hidden="true"></i><span>Lista de Desejos</span><span> (0)</span></a>
+                                <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)">
+                                    <i class="fa fa-heart" aria-hidden="true"></i>
+                                    <span>Lista de Desejos</span>
+                                    <span> (0)</span></a>
                                 </li>
                             </ul>
                         </div>
@@ -142,7 +145,8 @@
             <div class="Categories left-sidebar-widget" style="position: absolute">
                 <div class="columnblock-title">Devolu&ccedil;&atilde;o de Produto</div>
                 <div class="row">
-                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/cover-not-available-150x225.jpg"></a>
+                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto"
+                                                  src="resources/image/book-front-150x192.jpg"></a>
                 </div>
                 <p><strong>T&iacute;tulo do Livro</strong></p>
                 <p>Autor do Livro</p>
@@ -155,12 +159,12 @@
                     <div class="row">
                         <label for="returnOption" class="col-sm-3 control-label">O que deseja fazer?</label>
                         <div class="col-sm-9">
-                        <select class="form-control" id="returnOption" name="returnOption">
-                            <option value=""> --- Selecione --- </option>
-                            <option value="12">Devolver um Produto</option>
-                            <option value="12">Trocar um Produto</option>
-                            <option value="12">Cancelar um Item do Pedido</option>
-                        </select>
+                            <select class="form-control" id="returnOption" name="returnOption">
+                                <option value=""> --- Selecione ---</option>
+                                <option value="12">Devolver um Produto</option>
+                                <option value="12">Trocar um Produto</option>
+                                <option value="12">Cancelar um Item do Pedido</option>
+                            </select>
                         </div>
                     </div>
                     <div class="p-t-30">
@@ -182,7 +186,8 @@
             <div class="newslatter">
                 <form>
                     <h5>FIQUE POR DENTRO!</h5>
-                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos diretamente
+                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos
+                        diretamente
                         na sua caixa de entrada!</h4>
                     <div class="input-group">
                         <label hidden for="emailSubscription">Assinatura de newsletter por e-mail</label>

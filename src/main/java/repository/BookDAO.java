@@ -161,6 +161,7 @@ public class BookDAO implements IDAO {
                     imageDAO.delete(d, result) ;
                 }
                 for(Image i : book.getImages()){
+                    i.setBook(book.getId());
                     imageDAO.create(i, result);
                 }
 
@@ -331,17 +332,19 @@ public class BookDAO implements IDAO {
         } else {
             try {
                 Book book = (Book)object;
-
+                PreparedStatement pstm;
+                ResultSet rs;
                 // find matching authors
-                String findAuthorsSql = "SELECT " + booksAuthorsBookColumn + " FROM " + booksAuthorsTable + " WHERE " +
-                        isActiveColumn + "=true AND " + getAuthorsFilter(book);
-                PreparedStatement pstm = conn.prepareStatement(findAuthorsSql);
-                ResultSet rs = pstm.executeQuery();
+                String authorFilters =  getAuthorsFilter(book);
                 ArrayList<Integer> authors = new ArrayList<>();
-                while(rs.next()){
-                    authors.add(new Integer(rs.getInt(booksAuthorsBookColumn)));
+                if(authorFilters != null && !authorFilters.equals("")) {
+                    String findAuthorsSql = "SELECT " + booksAuthorsBookColumn + " FROM " + booksAuthorsTable + authorFilters;
+                    pstm = conn.prepareStatement(findAuthorsSql);
+                    rs = pstm.executeQuery();
+                    while (rs.next()) {
+                        authors.add(new Integer(rs.getInt(booksAuthorsBookColumn)));
+                    }
                 }
-
                 // find matching categories
 //                String findCategoreisSql = "SELECT " + bookCategoriesBookId + " FROM " + booksCategoriesTable + " WHERE " + getCategoryFilter();
 //                pstm = conn.prepareStatement(findCategoreisSql);
@@ -351,9 +354,9 @@ public class BookDAO implements IDAO {
 //                    categories.add(new Integer(rs.getInt(bookCategoriesBookId)));
 //                }
 
-                String bookSql =  "SELECT ("+ bookFields + ", "+ publisherName +")  FROM " + bookTable +
+                String bookSql =  "SELECT "+ bookFields + ", "+ publisherName + "," + bookIdColumn + " FROM " + bookTable +
                         " INNER JOIN "+ publisherTable + " ON " + publisherId + "=" + publisherIdColumn +
-                        " WHERE " + getBookFilters(book, authors, categories);
+                        " WHERE " + isActiveColumn + " = true AND " + getBookFilters(book, authors, categories);
                 pstm = conn.prepareStatement(bookSql);
 
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
@@ -383,7 +386,74 @@ public class BookDAO implements IDAO {
 
                     searchResult.add(b);
                 }
-                result.putObject(Author.class.getSimpleName(), searchResult);
+
+                // Recover Images
+                BookImageDAO imageDAO = new BookImageDAO();
+                for(DomainObject d : searchResult){
+                    Book b = (Book)d;
+                    imageDAO.findActive(b, result);
+                    ArrayList<Image> images = new ArrayList<>();
+                    if(result.getObject(Image.class.getSimpleName()) != null) {
+                        for (DomainObject o : result.getObject(Image.class.getSimpleName())) {
+                            Image i = (Image) o;
+                            images.add(i);
+                        }
+                    }
+                    b.setImages(images);
+                }
+                result.putObject(Book.class.getSimpleName(), searchResult);
+            } catch (Exception e) {
+                result.setMsg("error", e.getMessage());
+            }
+        }
+    }
+
+    public void findAuthors(DomainObject object, Result result){
+        Connection conn = new DBConnection().getConnection();
+        if(conn == null) {
+            result.setMsg("error", "Connection Error");
+        } else {
+            try {
+                Book book = (Book)object;
+                String sql = "SELECT " + booksAuthorsAuthorColumn + " FROM " + booksAuthorsTable +
+                        " WHERE " + booksAuthorsBookColumn + " = ?";
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setInt(1, book.getId());
+                ResultSet rs = pstm.executeQuery();
+
+                ArrayList<DomainObject> authors = new ArrayList<>();
+                while(rs.next()){
+                    Author a = new Author();
+                    a.setId(rs.getInt(booksAuthorsAuthorColumn));
+                    authors.add(a);
+                }
+                result.putObject(Author.class.getSimpleName(), authors);
+            } catch (Exception e) {
+                result.setMsg("error", e.getMessage());
+            }
+        }
+    }
+
+    public void findCategories(DomainObject object, Result result){
+        Connection conn = new DBConnection().getConnection();
+        if(conn == null) {
+            result.setMsg("error", "Connection Error");
+        } else {
+            try {
+                Book book = (Book)object;
+                String sql = "SELECT " + booksCategoriesCategoryId + " FROM " + booksCategoriesTable +
+                        " WHERE " + bookCategoriesBookId + " = ?";
+                PreparedStatement pstm = conn.prepareStatement(sql);
+                pstm.setInt(1, book.getId());
+                ResultSet rs = pstm.executeQuery();
+
+                ArrayList<DomainObject> categories = new ArrayList<>();
+                while(rs.next()){
+                    Category c = new Category();
+                    c.setId(rs.getInt(booksCategoriesCategoryId));
+                    categories.add(c);
+                }
+                result.putObject(Category.class.getSimpleName(), categories);
             } catch (Exception e) {
                 result.setMsg("error", e.getMessage());
             }
@@ -393,8 +463,8 @@ public class BookDAO implements IDAO {
     private String getBookFilters(Book book, ArrayList<Integer> authors, ArrayList<Integer> categories){
         String filters = "";
         // Search matching Publishers
-        if(book.getPublisher() != null){
-            filters += publisherIdColumn + "=" + book.getPublisher().toString();
+        if(book.getPublisher() != null && book.getPublisher().getId() != null){
+            filters += publisherIdColumn + "=" + book.getPublisher().getId();
         }
         // Search matching Authors
         if(authors.size()>0){
@@ -417,19 +487,27 @@ public class BookDAO implements IDAO {
         if (filters.length() > 0) {
             filters += " OR ";
         }
-        // Search book title
-        filters += titleColumn + "ILIKE %" + book.getTitle() + "%";
-        // Search book ISBN
-        filters += " OR " + isbnColumn + "ILIKE %" + book.getTitle() + "%";
+        if(book.getTitle() != null) {
+            // Search book title
+            filters += titleColumn + " ILIKE \'%" + book.getTitle() + "%\'";
+            // Search book ISBN
+            filters += " OR " + isbnColumn + " ILIKE \'%" + book.getTitle() + "%\'";
+        }
         return filters;
     }
     private String getAuthorsFilter(Book book){
         String filters = "";
-        for(Author a : book.getAuthors()){
-            if(filters.length() > 0){
-                filters += " OR ";
+        if(book.getAuthors() != null) {
+            for (Author a : book.getAuthors()) {
+                if (a.getId() != null) {
+                    if (filters.length() == 0)
+                        filters += " WHERE ";
+                    if (filters.length() > 0) {
+                        filters += " OR ";
+                    }
+                    filters += booksAuthorsAuthorColumn + "=" + a.getId();
+                }
             }
-            filters += booksAuthorsAuthorColumn + "=" + a.getId();
         }
         return filters;
     }

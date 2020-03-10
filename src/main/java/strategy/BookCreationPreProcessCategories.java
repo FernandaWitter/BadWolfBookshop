@@ -11,13 +11,15 @@ public class BookCreationPreProcessCategories implements IStrategy {
             Book book = (Book) object;
             CategoryDAO categoryDAO = new CategoryDAO();
             // Verify if category already exists and, if not, create it
-            for (Category c : book.getCategories()) {
+            for (int i =0; i <book.getCategories().size(); i++) {
+                Category c = book.getCategories().get(i);
                 categoryDAO.findAll(c, result);
                 // Only one category should match, or none
-                if (result.getObject(Author.class.getSimpleName()).get(0) == null) {
+                if(result.getObject(Category.class.getSimpleName()) == null)
                     categoryDAO.create(c, result);
+                if (result.getObject(Category.class.getSimpleName()) != null && result.getObject(Category.class.getSimpleName()).size() > 0) {
+                    c.setId(result.getObject(Category.class.getSimpleName()).get(i).getId());
                 }
-                c.setId(result.getObject(Author.class.getSimpleName()).get(0).getId());
             }
         }
     }

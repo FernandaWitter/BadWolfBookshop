@@ -13,7 +13,7 @@ public class BookCreationPreProcessPublisher implements IStrategy {
             // Verify if author already exists and, if not, create it
             publisherDAO.findAll(book.getPublisher(), result);
             // Only one publisher should match, or none
-            if (result.getObject(Publisher.class.getSimpleName()).get(0) == null) {
+            if (result.getObject(Publisher.class.getSimpleName()) == null) {
                 publisherDAO.create(book.getPublisher(), result);
             }
             book.getPublisher().setId(result.getObject(Publisher.class.getSimpleName()).get(0).getId());

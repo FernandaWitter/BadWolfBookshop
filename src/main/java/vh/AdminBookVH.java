@@ -63,10 +63,12 @@ public class AdminBookVH implements IViewHelper{
                         book.setPrice(Double.valueOf(request.getParameter("bookPrice")));
                 }
                 if(request.getParameter("booksInStock") != null){
-                    if(request.getParameter("bookNewUnits") != null)
-                        book.setPrice(Double.valueOf(request.getParameter("bookNewUnits")));
-                    else
-                        book.setPrice(Double.valueOf(request.getParameter("booksInStock")));
+                    int inStock = Integer.valueOf(request.getParameter("booksInStock"));
+                    if(request.getParameter("bookNewUnits") != null) {
+                        int newUnits = Integer.valueOf(request.getParameter("bookNewUnits"));
+                        book.setInStock(inStock + newUnits);
+                    } else
+                        book.setInStock(inStock);
                 }
                 if(request.getParameterValues("bookImage[]") != null){
                     String[] imagePaths = request.getParameterValues("bookImage[]");
@@ -91,7 +93,7 @@ public class AdminBookVH implements IViewHelper{
         RequestDispatcher dispatcher;
         request.setAttribute("resultado", result);
         String operation;
-        if(null == request.getAttribute("operation"))
+        if(request.getAttribute("operation") == null)
             operation = request.getParameter("operation");
         else
             operation = request.getAttribute("operation").toString();
@@ -105,7 +107,7 @@ public class AdminBookVH implements IViewHelper{
                     } else {
                         request.setAttribute("operation", "list");
                         request.setAttribute("noFilter", "noFilter");
-                        dispatcher = request.getRequestDispatcher("/book");
+                        dispatcher = request.getRequestDispatcher("/productList.jsp");
                         dispatcher.forward(request, response);
                     }
                     break;
@@ -117,22 +119,18 @@ public class AdminBookVH implements IViewHelper{
                     } else {
                         request.setAttribute("operation", "list");
                         request.setAttribute("noFilter", "noFilter");
-                        dispatcher = request.getRequestDispatcher("/book");
+                        dispatcher = request.getRequestDispatcher("/productList.jsp");
                         dispatcher.forward(request, response);
                     }
                     break;
-//                case "register":
-//                    dispatcher = request.getRequestDispatcher("/ms03/edit-boardgame.jsp");
-//                    dispatcher.forward(request, response);
-//                    break;
                 case "delete":
                     request.setAttribute("operation", "list");
                     request.setAttribute("noFilter", "noFilter");
-                    dispatcher = request.getRequestDispatcher("/book");
+                    dispatcher = request.getRequestDispatcher("/productList.jsp");
                     dispatcher.forward(request, response);
                     break;
                 default:
-                    dispatcher = request.getRequestDispatcher("/productLqist.jsp");
+                    dispatcher = request.getRequestDispatcher("/productList.jsp");
                     dispatcher.forward(request, response);
                     break;
 

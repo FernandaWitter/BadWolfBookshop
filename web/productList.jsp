@@ -1,4 +1,9 @@
+<%@ page import="domain.Result" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="domain.Book" %>
+<%@ page import="domain.DomainObject" %><%--<%@ page import="domain.Book" %>--%>
 <!DOCTYPE html>
+<%--<% Book b = null;%>--%>
 <html lang="en">
 <head>
     <title>Bad Wolf Bookshop</title>
@@ -89,6 +94,8 @@
 <%--        <li><a href="register.html">Register</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<% Result result = (Result) request.getAttribute("result");
+%>
 <div class="container">
     <div class="row">
         <div class="container" style="height:40px;"></div>
@@ -146,31 +153,56 @@
                 </tr>
                 </thead>
                 <tbody>
-                <%for (int i = 0; i < 15; i++) {%>
+                <%for (DomainObject d : result.getObject(Book.class.getSimpleName())) {
+                Book b = (Book) d;%>
                 <tr>
-                    <td class="text-center"><a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto"
-                                                                          alt="Imagem do Produto"
-                                                                          src="resources/image/book-front-25x32.jpg"></a>
+                    <form action="bookRegistration.jsp">
+                    <td class="text-center">
+                        <img class="img-thumbnail" title="Produto"
+                             alt="Imagem do Produto"
+                             src="<%if(b.getImages() != null && b.getImages().size() > 0) out.print(b.getImages().get(0).getPath());%>>">
                     </td>
-                    <td class="text-left"><a href="bookDetail.jsp">Livro</a></td>
-                    <td class="text-left">25</td>
-                    <td class="text-right">$54.00</td>
-                    <%if (i % 3 == 1) {%>
+                    <td class="text-left"><%out.print(b.getTitle());%>></td>
+                    <td class="text-left"><%out.print(b.getInStock());%></td>
+                    <td class="text-right">$<%out.print(b.getPrice());%></td>
+                    <%if (b.getInStock() == 0) {%>
                     <td class="text-center"><span class="label label-danger m-r-20 ">Em Falta</span></td>
-                    <%} else if (i % 4 == 1) {%>
+                    <%} else if (b.getInStock() < 10) {%>
                     <td class="text-center"><span class="label label-warning m-r-20 ">Estoque Baixo</span></td>
                     <%} else {%>
                     <td class="text-center"><span class="label label-primary m-r-20 ">Em Estoque</span></td>
                     <%}%>
-                    <td class="text-center"><a class="btn btn-primary" href="bookRegistration.jsp"><i class="fa fa-edit"></i> </a></td>
+                    <td class="text-center">
+                        <button type="submit" name="operation" value="update" class="fa fa-edit"></button>
+                        <input type="hidden" name="bookId" value="<%out.print(b.getId());%>">
+                    </td>
+                    </form>
                 </tr>
+<%--                <%for (int i = 0; i < 15; i++) {%>--%>
+<%--                <tr>--%>
+<%--                    <td class="text-center"><a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto"--%>
+<%--                                                                          alt="Imagem do Produto"--%>
+<%--                                                                          src="resources/image/book-front-25x32.jpg"></a>--%>
+<%--                    </td>--%>
+<%--                    <td class="text-left"><a href="bookDetail.jsp">Livro</a></td>--%>
+<%--                    <td class="text-left">25</td>--%>
+<%--                    <td class="text-right">$54.00</td>--%>
+<%--                    <%if (i % 3 == 1) {%>--%>
+<%--                    <td class="text-center"><span class="label label-danger m-r-20 ">Em Falta</span></td>--%>
+<%--                    <%} else if (i % 4 == 1) {%>--%>
+<%--                    <td class="text-center"><span class="label label-warning m-r-20 ">Estoque Baixo</span></td>--%>
+<%--                    <%} else {%>--%>
+<%--                    <td class="text-center"><span class="label label-primary m-r-20 ">Em Estoque</span></td>--%>
+<%--                    <%}%>--%>
+<%--                    <td class="text-center"><a class="btn btn-primary" href="bookRegistration.jsp"><i class="fa fa-edit"></i> </a></td>--%>
+<%--                </tr>--%>
                 <%}%>
                 </tbody>
             </table>
 
         </div>
         <div class="category-page-wrapper">
-            <div class="result-inner">Exibindo 1 a 15 de 245 (17 P&aacute;ginas)</div>
+            <div class="result-inner">Exibindo 1 a <%int total = result.getObject(Book.class.getSimpleName()).size(); out.print(total + " de " + total);%> (1 P&aacute;gina)</div>
             <div class="pagination-inner">
                 <ul class="pagination">
                     <li class="active"><span>1</span></li>

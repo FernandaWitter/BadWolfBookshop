@@ -18,7 +18,7 @@ public class Facade {
     public Facade() {
         // operations
         String create = "create";
-        String alter = "alter";
+        String update = "update";
         String delete = "delete";
         String find = "find";
 
@@ -64,13 +64,13 @@ public class Facade {
         // strategy mapping by class
         HashMap<String, ArrayList<IStrategy>> beforeBookMap = new HashMap<>();
         beforeBookMap.put(create, beforeBookSave);
-        beforeBookMap.put(alter, beforeBookUpdate);
+        beforeBookMap.put(update, beforeBookUpdate);
         beforeBookMap.put(delete, beforeBbookDelete);
         beforeBookMap.put(find, beforeBookFind);
 
         HashMap<String, ArrayList<IStrategy>> afterBookMap = new HashMap<>();
         afterBookMap.put(create, afterBookSave);
-        afterBookMap.put(alter, afterBookUpdate);
+        afterBookMap.put(update, afterBookUpdate);
         afterBookMap.put(delete, afterBookDelete);
         afterBookMap.put(find, afterBookFind);
 
@@ -107,14 +107,14 @@ public class Facade {
     public Result update(DomainObject object){
         Result result = new Result();
         String objectClass = object.getClass().getSimpleName();
-        ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("create");
+        ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("update");
         for(IStrategy is : preprocess){
             is.process(object, result);
         }
         if(!result.hasMsg("error")){
             IDAO idao = persistence.get(objectClass);
             idao.update(object, result);
-            ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("create");
+            ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("update");
             for(IStrategy is : postprocess){
                 is.process(object, result);
             }
@@ -125,14 +125,14 @@ public class Facade {
     public Result delete(DomainObject object){
         Result result = new Result();
         String objectClass = object.getClass().getSimpleName();
-        ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("create");
+        ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("delete");
         for(IStrategy is : preprocess){
             is.process(object, result);
         }
         if(!result.hasMsg("error")){
             IDAO idao = persistence.get(objectClass);
             idao.delete(object, result);
-            ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("create");
+            ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("delete");
             for(IStrategy is : postprocess){
                 is.process(object, result);
             }
@@ -143,7 +143,7 @@ public class Facade {
     public Result find(DomainObject object){
         Result result = new Result();
         String objectClass = object.getClass().getSimpleName();
-        ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("create");
+        ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("find");
         for(IStrategy is : preprocess){
             is.process(object, result);
         }
@@ -151,9 +151,12 @@ public class Facade {
         if(!result.hasMsg("error")){
             IDAO idao = persistence.get(objectClass);
             idao.findActive(object, result);
-            ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("create");
+            ArrayList<DomainObject> books = result.getObject(Book.class.getSimpleName());
+            ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("find");
             for(IStrategy is : postprocess){
-                is.process(object, result);
+                for(DomainObject d : books) {
+                    is.process(d, result);
+                }
             }
         }
         return result;

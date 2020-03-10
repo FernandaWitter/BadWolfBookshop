@@ -62,7 +62,7 @@ public class BookImageDAO implements IDAO {
         } else {
             try{
                 Image image = (Image)object;
-                String imageSql = "UPDATE " + imageTable + "SET " + isActiveColumn + "=false WHERE " + idColumn + "=?";
+                String imageSql = "UPDATE " + imageTable + " SET " + isActiveColumn + " = false WHERE " + idColumn + "=?";
                 PreparedStatement pstm = conn.prepareStatement(imageSql);
 
                 pstm.setInt(1, image.getId());

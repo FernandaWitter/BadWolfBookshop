@@ -62,10 +62,11 @@ public class AuthorDAO implements IDAO{
         } else {
             try {
                 Author author = (Author)object;
-                String authorSql = "SELECT (" + authorIdColumn + ") FROM " + authorsTable + " WHERE " + authorNameColumn + " ILIKE ?;";
+                String authorSql = "SELECT " + authorIdColumn + "," + authorNameColumn + " FROM " + authorsTable + " WHERE " +
+                        authorNameColumn + " ILIKE " + "\'%" + author.getName() + "%\';";
                 PreparedStatement pstm = conn.prepareStatement(authorSql, Statement.RETURN_GENERATED_KEYS);
 
-                pstm.setString(1, "%" + author.getName() + "%");
+//                pstm.setString(1, "" +  + "");
 
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
 
@@ -95,7 +96,7 @@ public class AuthorDAO implements IDAO{
         } else {
             try {
                 Author author = (Author)object;
-                String authorSql = "SELECT (" + authorIdColumn + ") FROM " + authorsTable + " WHERE " + authorIdColumn + "= ?;";
+                String authorSql = "SELECT " + authorIdColumn + ", " + authorNameColumn + " FROM " + authorsTable + " WHERE " + authorIdColumn + "= ?;";
                 PreparedStatement pstm = conn.prepareStatement(authorSql, Statement.RETURN_GENERATED_KEYS);
 
                 pstm.setInt(1, author.getId());

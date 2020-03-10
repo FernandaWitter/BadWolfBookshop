@@ -64,10 +64,11 @@ public class CategoryDAO implements IDAO{
             try {
                 Category category = (Category) object;
 
-                String categorySql = "SELECT (" + categoryIdColumn + ") FROM " + categoriesTable + " WHERE " + categoryNameColumn + " ILIKE ?;";
+                String categorySql = "SELECT " + categoryIdColumn +", " + categoryNameColumn + " FROM " + categoriesTable + " WHERE " +
+                        categoryNameColumn + " ILIKE \'%" + category.getName() + "%\';";
                 PreparedStatement pstm = conn.prepareStatement(categorySql, Statement.RETURN_GENERATED_KEYS);
 
-                pstm.setString(1, "%" + category.getName() + "%");
+//                pstm.setString(1, "\'%" + category.getName() + "%\'");
 
                 ResultSet rs = pstm.executeQuery();
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
@@ -98,7 +99,7 @@ public class CategoryDAO implements IDAO{
             try {
                 Category category = (Category) object;
 
-                String categorySql = "SELECT (" + categoryIdColumn + ") FROM " + categoriesTable + " WHERE " +
+                String categorySql = "SELECT " + categoryIdColumn + ", " + categoryNameColumn + " FROM " + categoriesTable + " WHERE " +
                         categoryIdColumn + " = ?;";
                 PreparedStatement pstm = conn.prepareStatement(categorySql);
 

@@ -61,10 +61,11 @@ public class PublisherDAO implements IDAO{
         } else {
             try {
                 Publisher publisher = (Publisher) object;
-                String authorSql = "SELECT (" + publisherIdColumn + ") FROM " + publisherTable + " WHERE " + publisherNameColumn + " ILIKE ?;";
+                String authorSql = "SELECT " + publisherIdColumn+ ", " + publisherNameColumn + " FROM " + publisherTable +
+                        " WHERE " + publisherNameColumn + " ILIKE \'%" +publisher.getName()+"%\';";
                 PreparedStatement pstm = conn.prepareStatement(authorSql, Statement.RETURN_GENERATED_KEYS);
 
-                pstm.setString(1, "%" + publisher.getName() + "%");
+//                pstm.setString(1, "%" + publisher.getName() + "%");
 
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
 

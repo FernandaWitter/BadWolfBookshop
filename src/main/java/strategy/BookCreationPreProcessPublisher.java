@@ -15,8 +15,9 @@ public class BookCreationPreProcessPublisher implements IStrategy {
             // Only one publisher should match, or none
             if (result.getObject(Publisher.class.getSimpleName()) == null) {
                 publisherDAO.create(book.getPublisher(), result);
+            } else {
+                book.getPublisher().setId(result.getObject(Publisher.class.getSimpleName()).get(0).getId());
             }
-            book.getPublisher().setId(result.getObject(Publisher.class.getSimpleName()).get(0).getId());
         }
     }
 }

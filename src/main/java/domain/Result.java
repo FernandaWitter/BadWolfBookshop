@@ -65,7 +65,7 @@ public class Result extends DomainObject{
     }
 
     public boolean hasMsg(String ref){
-        return msg.containsKey(ref);
+        return msg.containsKey(ref) && msg.get(ref) != null;
     }
 
     public boolean hasObjects(){

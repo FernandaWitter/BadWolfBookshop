@@ -51,6 +51,6 @@ public class DataValidation implements IStrategy {
 
 
         if(!flag)
-            result.setMsg("erro", "Erro de Valida&ccedil;&atilde;o de Dados. Existem campos obrigat&oacute;rios n&atildeo preenchidos.");
+            result.setMsg("error", "Erro de Valida&ccedil;&atilde;o de Dados.<br/> Existem campos obrigat&oacute;rios n&atildeo preenchidos.");
     }
 }

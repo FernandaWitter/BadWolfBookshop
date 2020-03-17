@@ -499,6 +499,12 @@ public class BookDAO implements IDAO {
             // Search book ISBN
             filters += " OR " + isbnColumn + " ILIKE \'%" + book.getTitle() + "%\'";
         }
+        if(book.getId() != null){
+            if (filters.length() > 0) {
+                filters += " OR ";
+            }
+            filters += bookIdColumn + " = " + book.getId();
+        }
         return filters;
     }
     private String getAuthorsFilter(Book book){

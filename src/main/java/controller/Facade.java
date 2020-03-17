@@ -91,6 +91,8 @@ public class Facade {
         String objectClass = object.getClass().getSimpleName();
         ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("create");
         for(IStrategy is : preprocess){
+            if(result.hasMsg("error"))
+                break;
             is.process(object, result);
         }
         if(!result.hasMsg("error")){
@@ -109,6 +111,8 @@ public class Facade {
         String objectClass = object.getClass().getSimpleName();
         ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("update");
         for(IStrategy is : preprocess){
+            if(result.hasMsg("error"))
+                break;
             is.process(object, result);
         }
         if(!result.hasMsg("error")){
@@ -127,6 +131,8 @@ public class Facade {
         String objectClass = object.getClass().getSimpleName();
         ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("delete");
         for(IStrategy is : preprocess){
+            if(result.hasMsg("error"))
+                break;
             is.process(object, result);
         }
         if(!result.hasMsg("error")){
@@ -145,6 +151,8 @@ public class Facade {
         String objectClass = object.getClass().getSimpleName();
         ArrayList<IStrategy> preprocess = preprocessing.get(objectClass).get("find");
         for(IStrategy is : preprocess){
+            if(result.hasMsg("error"))
+                break;
             is.process(object, result);
         }
 
@@ -153,9 +161,11 @@ public class Facade {
             idao.findActive(object, result);
             ArrayList<DomainObject> books = result.getObject(Book.class.getSimpleName());
             ArrayList<IStrategy> postprocess = postprocessing.get(objectClass).get("find");
-            for(IStrategy is : postprocess){
-                for(DomainObject d : books) {
-                    is.process(d, result);
+            if(books != null) {
+                for (IStrategy is : postprocess) {
+                    for (DomainObject d : books) {
+                        is.process(d, result);
+                    }
                 }
             }
         }

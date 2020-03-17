@@ -108,74 +108,86 @@
 <% Result result = (Result) request.getAttribute("result");
 %>
 <div class="container">
-    <div class="row">
-        <div class="container" style="height:40px;"></div>
-        <div class="center-block" id="content">
-            <h2 class="text-center m-b-20">Listagem de Produtos</h2>
-            <div class="category-page-wrapper">
-                <div class="col-md-2 text-right sort-wrapper">
-                    <label class="control-label" for="input-sort">Ordenar :</label>
-                    <div class="sort-inner">
-                        <select id="input-sort" class="form-control">
-                            <option value="ASC" selected="selected">Mais Recentes</option>
-                            <option value="ASC">Mais Antigos</option>
-                            <option value="ASC">Nome (A - Z)</option>
-                            <option value="DESC">Nome (Z - A)</option>
-                            <option value="ASC">Valor</option>
-                            <option value="DESC">Status</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-1 text-right page-wrapper">
-                    <label class="control-label" for="input-limit">Exibir :</label>
-                    <div class="limit">
-                        <select id="input-limit" class="form-control">
-                            <option value="8" selected="selected">15</option>
-                            <option value="25">30</option>
-                            <option value="50">50</option>
-                            <option value="75">100</option>
-                            <option value="100">Todos</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 pull-right">
-                    <form>
-
-                        <%--                        <div class="row">--%>
-                        <input id="searchProduct" type="text" class="col-sm-4 input-lg col-sm-offset-3"
-                               style="box-shadow: 0 0 2px #189b79 !important;">
-                        <button class="btn btn-primary col-sm-4 pull-right">Buscar</button>
-                        <label for="searchProduct" hidden>Caixa de Busca</label>
-                        <%--                        </div>--%>
-                    </form>
+    <div class="container" style="height:40px;"></div>
+    <div class="center-block" id="content">
+        <%
+            if (request.getSession().getAttribute("success") != null) {
+                out.print(request.getSession().getAttribute("success") + "<br/>");
+                request.getSession().removeAttribute("success");
+            }
+        %>
+        <h2 class="text-center m-b-20">Listagem de Produtos</h2>
+        <%
+            if (result.getObject(Book.class.getSimpleName()) == null) {
+                out.print("<p><strong>Nenhum resultado encontrado.</strong></p>");
+            }
+        %>
+        <div class="category-page-wrapper">
+            <div class="col-md-2 text-right sort-wrapper">
+                <label class="control-label" for="input-sort">Ordenar :</label>
+                <div class="sort-inner">
+                    <select id="input-sort" class="form-control">
+                        <option value="ASC" selected="selected">Mais Recentes</option>
+                        <option value="ASC">Mais Antigos</option>
+                        <option value="ASC">Nome (A - Z)</option>
+                        <option value="DESC">Nome (Z - A)</option>
+                        <option value="ASC">Valor</option>
+                        <option value="DESC">Status</option>
+                    </select>
                 </div>
             </div>
+            <div class="col-md-1 text-right page-wrapper">
+                <label class="control-label" for="input-limit">Exibir :</label>
+                <div class="limit">
+                    <select id="input-limit" class="form-control">
+                        <option value="8" selected="selected">15</option>
+                        <option value="25">30</option>
+                        <option value="50">50</option>
+                        <option value="75">100</option>
+                        <option value="100">Todos</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 pull-right">
+                <form action="find">
+                    <input id="searchProduct" type="text" class="col-sm-4 input-lg col-sm-offset-3"
+                           style="box-shadow: 0 0 2px #189b79 !important; height: inherit;" name="searchbox">
+                    <input type="submit" class="btn btn-primary col-sm-4 pull-right" value="Buscar"></input>
+                    <label for="searchProduct" hidden>Caixa de Busca</label>
+                    <%--                        </div>--%>
+                </form>
+            </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <td class="text-center">Produto</td>
-                    <td class="text-left">Nome</td>
-                    <td class="text-left">Estoque</td>
-                    <td class="text-right">Valor Unit&aacute;rio</td>
-                    <td class="text-center">Status</td>
-                    <td class="text-center">Editar</td>
-                </tr>
-                </thead>
-                <tbody>
-                <%for (DomainObject d : result.getObject(Book.class.getSimpleName())) {
-                Book b = (Book) d;%>
-                <tr>
-                    <form action="bookRegistration.jsp">
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <td class="text-center">Produto</td>
+                <td class="text-left">Nome</td>
+                <td class="text-left">Estoque</td>
+                <td class="text-right">Valor Unit&aacute;rio</td>
+                <td class="text-center">Status</td>
+                <td class="text-center">Editar</td>
+                <td class="text-center">Excluir</td>
+            </tr>
+            </thead>
+            <tbody>
+            <%
+                if (result.getObject(Book.class.getSimpleName()) != null) {
+                for (DomainObject d : result.getObject(Book.class.getSimpleName())) {
+                    Book b = (Book) d;
+            %>
+            <tr>
+                <form action="${pageContext.request.contextPath}/books/edit" method="post">
                     <td class="text-center">
                         <img class="img-thumbnail" title="Produto"
                              alt="Imagem do Produto"
-                             src="<%if(b.getImages() != null && b.getImages().size() > 0) out.print(b.getImages().get(0).getPath());%>>">
+                             src="<%if(b.getImages() != null && b.getImages().size() > 0) out.print(b.getImages().get(0).getPath());%>">
                     </td>
-                    <td class="text-left"><%out.print(b.getTitle());%>></td>
+                    <td class="text-left"><%out.print(b.getTitle());%></td>
                     <td class="text-left"><%out.print(b.getInStock());%></td>
-                    <td class="text-right">$<%out.print(b.getPrice());%></td>
+                    <td class="text-right">$<%out.print(String.format("%.2f", b.getPrice()));%></td>
                     <%if (b.getInStock() == 0) {%>
                     <td class="text-center"><span class="label label-danger m-r-20 ">Em Falta</span></td>
                     <%} else if (b.getInStock() < 10) {%>
@@ -187,54 +199,61 @@
                         <button type="submit" name="operation" value="update" class="fa fa-edit"></button>
                         <input type="hidden" name="bookId" value="<%out.print(b.getId());%>">
                     </td>
-                    </form>
-                </tr>
-<%--                <%for (int i = 0; i < 15; i++) {%>--%>
-<%--                <tr>--%>
-<%--                    <td class="text-center"><a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto"--%>
-<%--                                                                          alt="Imagem do Produto"--%>
-<%--                                                                          src="resources/image/book-front-25x32.jpg"></a>--%>
-<%--                    </td>--%>
-<%--                    <td class="text-left"><a href="bookDetail.jsp">Livro</a></td>--%>
-<%--                    <td class="text-left">25</td>--%>
-<%--                    <td class="text-right">$54.00</td>--%>
-<%--                    <%if (i % 3 == 1) {%>--%>
-<%--                    <td class="text-center"><span class="label label-danger m-r-20 ">Em Falta</span></td>--%>
-<%--                    <%} else if (i % 4 == 1) {%>--%>
-<%--                    <td class="text-center"><span class="label label-warning m-r-20 ">Estoque Baixo</span></td>--%>
-<%--                    <%} else {%>--%>
-<%--                    <td class="text-center"><span class="label label-primary m-r-20 ">Em Estoque</span></td>--%>
-<%--                    <%}%>--%>
-<%--                    <td class="text-center"><a class="btn btn-primary" href="bookRegistration.jsp"><i class="fa fa-edit"></i> </a></td>--%>
-<%--                </tr>--%>
-                <%}%>
-                </tbody>
-            </table>
+                    <td class="text-center">
+                        <button type="submit" class="fa fa-trash" formaction="delete"></button>
+                        <input type="hidden" name="bookId" value="<%out.print(b.getId());%>">
+                    </td>
+                </form>
+            </tr>
+            <%--                <%for (int i = 0; i < 15; i++) {%>--%>
+            <%--                <tr>--%>
+            <%--                    <td class="text-center"><a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto"--%>
+            <%--                                                                          alt="Imagem do Produto"--%>
+            <%--                                                                          src="resources/image/book-front-25x32.jpg"></a>--%>
+            <%--                    </td>--%>
+            <%--                    <td class="text-left"><a href="bookDetail.jsp">Livro</a></td>--%>
+            <%--                    <td class="text-left">25</td>--%>
+            <%--                    <td class="text-right">$54.00</td>--%>
+            <%--                    <%if (i % 3 == 1) {%>--%>
+            <%--                    <td class="text-center"><span class="label label-danger m-r-20 ">Em Falta</span></td>--%>
+            <%--                    <%} else if (i % 4 == 1) {%>--%>
+            <%--                    <td class="text-center"><span class="label label-warning m-r-20 ">Estoque Baixo</span></td>--%>
+            <%--                    <%} else {%>--%>
+            <%--                    <td class="text-center"><span class="label label-primary m-r-20 ">Em Estoque</span></td>--%>
+            <%--                    <%}%>--%>
+            <%--                    <td class="text-center"><a class="btn btn-primary" href="bookRegistration.jsp"><i class="fa fa-edit"></i> </a></td>--%>
+            <%--                </tr>--%>
+            <%}%>
+            </tbody>
+        </table>
 
-        </div>
-        <div class="category-page-wrapper">
-            <div class="result-inner">Exibindo 1 a <%int total = result.getObject(Book.class.getSimpleName()).size(); out.print(total + " de " + total);%> (1 P&aacute;gina)</div>
-            <div class="pagination-inner">
-                <ul class="pagination">
-                    <li class="active"><span>1</span></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">...</a></li>
-                    <li><a href="#">17</a></li>
-                    <li><a href="#">&gt;</a></li>
-                    <li><a href="#">&gt;|</a></li>
-                </ul>
-            </div>
-        </div>
+    </div>
+    <div class="category-page-wrapper">
+        <%
+                int total = result.getObject(Book.class.getSimpleName()).size();
+                int displaying = total > 15 ? 15 : total;
+                out.print("<div class=\"result-inner\">");
+                out.print("Exibindo 1 a " + displaying + " de " + total);
+                out.print("</div>");
+                out.print("<div class=\"pagination-inner\">");
+                out.print("<ul class=\"pagination\">");
+                out.print("<li><a href=\"#\">|&lt;</a></li>");
+                out.print("<li><a href=\"#\">l&t;</a></li>");
+                out.print("<li class=\"active\"><span>1</span></li>");
+                out.print("<li><a href=\"#\">&gt;</a></li>");
+                out.print("<li><a href=\"#\">&gt;|</a></li>");
+                out.print("</ul>");
+                out.print("</div>");
+            }%>
     </div>
 </div>
-
 <footer>
     <div class="footer-bottom">
         <div id="bottom-footer">
             <div class="copyright"> Copyright - <a class="yourstore" href="http://www.lionode.com/"> Created by
                 Lionode
-                &copy; 2017 </a></div>
+                &copy; 2017 </a>
+            </div>
         </div>
     </div>
     <a id="scrollup">Scroll</a>

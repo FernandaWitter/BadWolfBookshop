@@ -14,11 +14,11 @@ public class BookCreationPreProcessAuthors implements IStrategy {
                 Author a = book.getAuthors().get(i);
                 authorDAO.findAll(a, result);
                 // Only one author should match, or none
+                if (result.getObject(Author.class.getSimpleName()) == null || result.getObject(Author.class.getSimpleName()).size() == 0) {
+                    authorDAO.create(a, result);
+                }
                 if (result.getObject(Author.class.getSimpleName()) != null) {
-                    if (result.getObject(Author.class.getSimpleName()).get(i) == null) {
-                        authorDAO.create(a, result);
-                    }
-                    a.setId(result.getObject(Author.class.getSimpleName()).get(i).getId());
+                    a.setId(result.getObject(Author.class.getSimpleName()).get(0).getId());
                 }
             }
         }

@@ -1,3 +1,4 @@
+<%@ page import="domain.DomainObject" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,6 +26,9 @@
 <body class="index">
 <div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
 <header>
+    <%
+        DomainObject o = new DomainObject();
+    %>
     <div class="header-top">
         <div class="container">
             <div class="row">

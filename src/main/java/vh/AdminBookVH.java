@@ -107,42 +107,41 @@ public class AdminBookVH implements IViewHelper {
     @Override
     public void setView(HttpServletRequest request, HttpServletResponse response, Result result) {
         RequestDispatcher dispatcher;
-        request.setAttribute("resultado", result);
-        String operation;
-        if(request.getAttribute("operation") == null)
+        request.setAttribute("result", result);
+        String operation = "";
+        if (request.getAttribute("operation") == null)
             operation = request.getParameter("operation");
         else
             operation = request.getAttribute("operation").toString();
         try {
-            switch(operation){
+            switch (operation) {
                 case "create":
-                    if(result.hasMsg("error")){
+                    if (result.hasMsg("error")) {
                         request.setAttribute("operation", "create");
                         dispatcher = request.getRequestDispatcher("/bookRegistration.jsp");
                         dispatcher.forward(request, response);
                     } else {
-                        request.setAttribute("operation", "list");
-                        request.setAttribute("noFilter", "noFilter");
-                        dispatcher = request.getRequestDispatcher("/productList.jsp");
-                        dispatcher.forward(request, response);
+                        request.getSession().setAttribute("success", "<p stlye=\"color:#008000\">Livro salvo com sucesso!</p>");
+                        response.sendRedirect("list");
                     }
                     break;
                 case "update":
-                    if(result.hasMsg("error")){
+                    if (result.hasMsg("error")) {
                         request.setAttribute("operation", "update");
                         dispatcher = request.getRequestDispatcher("/bookRegistration.jsp");
                         dispatcher.forward(request, response);
                     } else {
-                        request.setAttribute("operation", "list");
-                        request.setAttribute("noFilter", "noFilter");
-                        dispatcher = request.getRequestDispatcher("/productList.jsp");
-                        dispatcher.forward(request, response);
+                        request.getSession().setAttribute("success", "<p stlye=\"color:#008000\">Livro editado com sucesso!</p>");
+                        response.sendRedirect("list");
                     }
                     break;
                 case "delete":
-                    request.setAttribute("operation", "list");
-                    request.setAttribute("noFilter", "noFilter");
-                    dispatcher = request.getRequestDispatcher("/productList.jsp");
+                    request.getSession().setAttribute("success", "<p style=\"color:#00FF00\"><strong>Livro exclu&iacute;do com sucesso!</strong></p>");
+                    response.sendRedirect("list");
+                    break;
+                case "new":
+                case "edit":
+                    dispatcher = request.getRequestDispatcher("/bookRegistration.jsp");
                     dispatcher.forward(request, response);
                     break;
                 default:

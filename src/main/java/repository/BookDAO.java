@@ -156,9 +156,11 @@ public class BookDAO implements IDAO {
                 imageDAO.findActive(book, result);
 
                 // To diminish processing expenditure, delete all old images and save current ones as new
-                ArrayList<DomainObject> oldImages = result.getObject(Image.class.getSimpleName());
-                for(DomainObject d : oldImages){
-                    imageDAO.delete(d, result) ;
+                if(result.getObject(Image.class.getSimpleName()) != null) {
+                    ArrayList<DomainObject> oldImages = result.getObject(Image.class.getSimpleName());
+                    for (DomainObject d : oldImages) {
+                        imageDAO.delete(d, result);
+                    }
                 }
                 for(Image i : book.getImages()){
                     i.setBook(book.getId());
@@ -356,7 +358,11 @@ public class BookDAO implements IDAO {
 
                 String bookSql =  "SELECT "+ bookFields + ", "+ publisherName + "," + bookIdColumn + " FROM " + bookTable +
                         " INNER JOIN "+ publisherTable + " ON " + publisherId + "=" + publisherIdColumn +
-                        " WHERE " + isActiveColumn + " = true AND " + getBookFilters(book, authors, categories);
+                        " WHERE " + isActiveColumn + " = true";
+                String filters = getBookFilters(book, authors, categories);
+                if(filters != null && !filters.equals(""))
+                    bookSql += " AND " + filters;
+                bookSql += ";";
                 pstm = conn.prepareStatement(bookSql);
 
                 ArrayList<DomainObject> searchResult = new ArrayList<>();

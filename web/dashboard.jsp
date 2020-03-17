@@ -90,12 +90,12 @@
                 </li>
                 <li><a href="#" class="active parent">Produtos</a>
                     <ul>
-                        <li><a href="productList.jsp">Listagem de Produtos</a></li>
-                        <li><a href="bookRegistration.jsp">Cadastrar Produto</a></li>
+                        <li><a href="books/list">Listagem de Produtos</a></li>
+                        <li><a href="books/new">Cadastrar Produto</a></li>
                     </ul>
                 </li>
                 <li><a href="#" class="active parent">Pedidos</a>
-                    <ul>
+                    <ul><form>
                         <li><a href="orderList.jsp">Listagem de Pedidos</a></li>
                         <li><a href="orderList.jsp">Pedidos em Aberto</a></li>
                         <li><a href="orderList.jsp">Pedidos de Troca e Devolu&ccedil;&atilde;o</a></li>

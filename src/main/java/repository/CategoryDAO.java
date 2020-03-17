@@ -78,6 +78,8 @@ public class CategoryDAO implements IDAO{
                     c.setId(idCategory);
                     searchResult.add(c);
                 }
+                if(result.hasObject(Category.class.getSimpleName()))
+                    result.removeObject(Category.class.getSimpleName());
                 result.putObject(Category.class.getSimpleName(), searchResult);
             } catch (Exception e) {
                 result.setMsg("error", e.getMessage());

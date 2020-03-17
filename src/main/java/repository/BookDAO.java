@@ -220,7 +220,7 @@ public class BookDAO implements IDAO {
 
                 pstm.execute();
             } catch (Exception e){
-                result.setMsg("error", e.getMessage());
+                result.setMsg("error", "N&atilde;o foi poss&iacute;vel salvar o livro. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
             }
         }
 
@@ -321,7 +321,7 @@ public class BookDAO implements IDAO {
 
                 result.putObject(Author.class.getSimpleName(), searchResult);
             } catch (Exception e) {
-                result.setMsg("error", e.getMessage());
+                result.setMsg("error", "N&atilde;o foi poss&iacute;vel salvar o livro. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
             }
         }
     }
@@ -409,7 +409,7 @@ public class BookDAO implements IDAO {
                 }
                 result.putObject(Book.class.getSimpleName(), searchResult);
             } catch (Exception e) {
-                result.setMsg("error", e.getMessage());
+                result.setMsg("error", "N&atilde;o foi poss&iacute;vel realizar a busca. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
             }
         }
     }
@@ -461,7 +461,7 @@ public class BookDAO implements IDAO {
                 }
                 result.putObject(Category.class.getSimpleName(), categories);
             } catch (Exception e) {
-                result.setMsg("error", e.getMessage());
+                result.setMsg("error", "N&atilde;o foi poss&iacute;vel realizar a busca. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
             }
         }
     }

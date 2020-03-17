@@ -18,7 +18,7 @@ public class BookCreationPreProcessCategories implements IStrategy {
                 if(result.getObject(Category.class.getSimpleName()) == null)
                     categoryDAO.create(c, result);
                 if (result.getObject(Category.class.getSimpleName()) != null && result.getObject(Category.class.getSimpleName()).size() > 0) {
-                    c.setId(result.getObject(Category.class.getSimpleName()).get(i).getId());
+                    c.setId(result.getObject(Category.class.getSimpleName()).get(0).getId());
                 }
             }
         }

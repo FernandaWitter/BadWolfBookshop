@@ -9,23 +9,23 @@
     <meta name="description" content="e-commerce site well design with responsive view."/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <%--    <link href="resources/image/favicon.png" rel="icon" type="image/png" >--%>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
-    <link href="resources/css/googleFonts.css" rel="stylesheet"/>
-    <link href="resources/css/stylesheet.css" rel="stylesheet">
-    <link href="resources/css/responsive.css" rel="stylesheet">
-    <link href="resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
-    <script type="text/javascript" src="resources/javascript/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/jstree.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/template.js"></script>
-    <script type="text/javascript" src="resources/javascript/common.js"></script>
-    <script type="text/javascript" src="resources/javascript/global.js"></script>
-    <script type="text/javascript" src="resources/javascript/owl-carousel/owl.carousel.min.js"></script>
+    <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/resources/css/googleFonts.css" rel="stylesheet"/>
+    <link href="${pageContext.request.contextPath}/resources/css/stylesheet.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/jstree.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/template.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/common.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/global.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.min.js"></script>
 </head>
 <body class="col-2 left-col">
-<div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
+<div class="preloader loader" style="display: block;"><img src="${pageContext.request.contextPath}/resources/image/loader-circle.gif" alt="#"/></div>
 <header>
     <div class="header-top">
         <div class="container">
@@ -33,7 +33,7 @@
                 <div class="col-sm-12">
                     <div class="top-left pull-left">
                         <div class="wel-come-msg" style="font-size: 24px"><a href="#"><img
-                                src="resources/image/logo_black_small.jpg" title="Bad Wolf Bookshop"
+                                src="${pageContext.request.contextPath}/resources/image/logo_black_small.jpg" title="Bad Wolf Bookshop"
                                 alt="Bad Wolf Bookshop Logo" class="img-responsive"/></a></div>
                     </div>
                     <div class="top-right pull-right">
@@ -66,8 +66,8 @@
                 </li>
                 <li><a href="#" class="active parent">Produtos</a>
                     <ul>
-                        <li><a href="productList.jsp">Listagem de Produtos</a></li>
-                        <li><a href="bookRegistration.jsp">Cadastrar Produto</a></li>
+                        <li><a href="list">Listagem de Produtos</a></li>
+                        <li><a href="new">Cadastrar Produto</a></li>
                     </ul>
                 </li>
                 <li><a href="#" class="active parent">Pedidos</a>

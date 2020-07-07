@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class PublisherDAO implements IDAO{
+public class PublisherDAO implements IDAO {
     private final String publisherTable = "publishers";
     private final String publisherIdColumn = "pub_id";
     private final String publisherNameColumn = "pub_name";
@@ -20,10 +20,10 @@ public class PublisherDAO implements IDAO{
     @Override
     public void create(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
-            try{
+            try {
                 Publisher publisher = (Publisher) object;
                 String authorSql = "INSERT INTO " + publisherTable + publisherFields + " VALUES (?)";
                 PreparedStatement pstm = conn.prepareStatement(authorSql, Statement.RETURN_GENERATED_KEYS);
@@ -37,7 +37,7 @@ public class PublisherDAO implements IDAO{
                 } else {
                     result.setMsg("error", "An error occurred. The Author entry could not be created.");
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 result.setMsg("error", e.getMessage());
             }
         }
@@ -56,17 +56,14 @@ public class PublisherDAO implements IDAO{
     @Override
     public void findAll(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
                 Publisher publisher = (Publisher) object;
-                String authorSql = "SELECT " + publisherIdColumn+ ", " + publisherNameColumn + " FROM " + publisherTable +
-                        " WHERE " + publisherNameColumn + " ILIKE \'%" +publisher.getName()+"%\';";
+                String authorSql = "SELECT " + publisherIdColumn + ", " + publisherNameColumn + " FROM " + publisherTable +
+                        " WHERE " + publisherNameColumn + " ILIKE \'%" + publisher.getName() + "%\';";
                 PreparedStatement pstm = conn.prepareStatement(authorSql, Statement.RETURN_GENERATED_KEYS);
-
-//                pstm.setString(1, "%" + publisher.getName() + "%");
-
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
 
                 ResultSet rs = pstm.executeQuery();
@@ -85,6 +82,6 @@ public class PublisherDAO implements IDAO{
 
     @Override
     public void findActive(DomainObject object, Result result) {
-       findAll(object, result);
+        findAll(object, result);
     }
 }

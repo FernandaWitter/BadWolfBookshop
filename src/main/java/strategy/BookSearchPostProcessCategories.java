@@ -15,7 +15,7 @@ public class BookSearchPostProcessCategories implements IStrategy {
         Book book = (Book) object;
         bookDAO.findCategories(book, result);
         ArrayList<Category> categories = new ArrayList<>();
-        for(DomainObject d : result.getObject(Category.class.getSimpleName())) {
+        for (DomainObject d : result.getObject(Category.class.getSimpleName())) {
             categoryDAO.findById(d, result);
             Category c = (Category) result.getObject(Category.class.getSimpleName()).get(0);
             result.removeObject(Category.class.getSimpleName());

@@ -1,3 +1,5 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="domain.Result" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,11 +68,14 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -87,20 +92,27 @@
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
                 <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -153,6 +165,20 @@
                        class="btn btn-primary" href="registration.jsp">Cadastre-se</a>
                 </div>
                 <div class="col-sm-6">
+                    <%
+                        if (request.getAttribute(Result.class.getSimpleName()) != null) {
+                            Result result = (Result) request.getAttribute(Result.class.getSimpleName());
+                            if(result.hasMsg("error")) {
+                                out.print("<div class=\"row m-t-40 text-center\">");
+                                out.print("<p style=\"color:red; font-weight: bold;\"><strong>");
+                                out.print(result.getMsg("error") + "<br/>");
+                                out.print("</strong></p><br/>");
+                                out.print("</div>");
+                                result.removeMsg("error");
+                            }
+                        }
+                    %>
+                    <form method="post" action="${pageContext.request.contextPath}/login">
                     <h2>J&aacute; &eacute; Cliente?</h2>
                     <p>Se voc&ecirc; j&aacute; tem uma conta conosco, basta realizar o login para continuar desfrutando
                         o site!</p>
@@ -166,8 +192,10 @@
                         <input type="password" name="password" value="" placeholder="Password" id="input-password"
                                class="form-control">
                         <a href="forgetPassword.jsp" class="forgot">Esqueceu a Senha?</a></div>
-                    <a type="button" value="Login" id="button-login" data-loading-text="Loading..."
-                       class="btn btn-primary" href="index.jsp">Login</a>
+                        <button type="submit" value="Login" id="button-login"class="btn btn-primary">Login</button>
+<%--                    <a type="button" value="Login" id="button-login" data-loading-text="Loading..."--%>
+<%--                       class="btn btn-primary" href="${pageContext.request.contextPath}/login">Login</a>--%>
+                    </form>
                 </div>
             </div>
         </div>

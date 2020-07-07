@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Category extends DomainObject {
     private String name;
 
-    public Category(String name){
+    public Category(String name) {
         this.name = name;
     }
 }

@@ -1,3 +1,8 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="domain.Result" %>
+<%@ page import="domain.Voucher" %>
+<%@ page import="domain.DomainObject" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,23 +12,23 @@
     <meta name="description" content="e-commerce site well design with responsive view."/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <%--    <link href="resources/image/favicon.png" rel="icon" type="image/png" >--%>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
-    <link href="resources/css/googleFonts.css" rel="stylesheet"/>
-    <link href="resources/css/stylesheet.css" rel="stylesheet">
-    <link href="resources/css/responsive.css" rel="stylesheet">
-    <link href="resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
-    <script type="text/javascript" src="resources/javascript/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/jstree.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/template.js"></script>
-    <script type="text/javascript" src="resources/javascript/common.js"></script>
-    <script type="text/javascript" src="resources/javascript/global.js"></script>
-    <script type="text/javascript" src="resources/javascript/owl-carousel/owl.carousel.min.js"></script>
+    <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/resources/css/googleFonts.css" rel="stylesheet"/>
+    <link href="${pageContext.request.contextPath}/resources/css/stylesheet.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/jstree.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/template.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/common.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/global.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.min.js"></script>
 </head>
 <body class="index">
-<div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
+<div class="preloader loader" style="display: block;"><img src="${pageContext.request.contextPath}/resources/image/loader-circle.gif" alt="#"/></div>
 <header>
     <div class="header-top">
         <div class="container">
@@ -66,11 +71,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -86,21 +95,28 @@
     <div class="container">
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
-                <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                <div id="logo"><a href="index.jsp"><img src="${pageContext.request.contextPath}/resources/image/logo.jpg" title="E-Commerce"
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -137,6 +153,14 @@
 <%--        <li><a href="cart.html">Shopping Cart</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<%
+    Result result;
+    if(request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+
+%>
 <div class="container">
     <div class="row m-t-40">
         <div id="column-left" class="col-sm-3 hidden-xs column-left">
@@ -155,13 +179,22 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <%for (int i = 0; i < 3; i++) {%>
+                        <%if(result.hasObject(Voucher.class.getSimpleName())) {
+                            for(DomainObject d : result.getObject(Voucher.class.getSimpleName())){
+                                Voucher voucher = (Voucher)d;
+                            %>
                         <tr>
-                            <td class="text-center"><strong>#321QWE987</strong></td>
-                            <td class="text-center">$54.00</td>
-                            <td class="text-center">28/09/2020</td>
+                            <td class="text-center"><strong>#<%out.print(voucher.getId());%></strong></td>
+                            <td class="text-center">$<%out.print(String.format("%.2f", voucher.getAmount()));%></td>
+                            <td class="text-center"><%
+                                if(voucher.getExpirationDate() != null)
+                                    out.print(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(voucher.getExpirationDate()));
+                                else
+                                    out.print("Indefinido");%>
+                            </td>
                         </tr>
-                        <%}%>
+                        <%}
+                        }%>
                         </tbody>
                     </table>
                 </div>
@@ -169,7 +202,7 @@
     </div>
 </div>
 <div class="footer-top-cms parallax-container">
-    <div class="parallax"><img src="resources/image/parallax1.jpg" alt="#"></div>
+    <div class="parallax"><img src="${pageContext.request.contextPath}/resources/image/parallax1.jpg" alt="#"></div>
     <div class="container">
         <div class="row">
             <div class="newslatter">
@@ -290,10 +323,10 @@
             <div class="footer-bottom-cms">
                 <div class="footer-payment">
                     <ul>
-                        <li class="mastero"><a href="#"><img alt="" src="resources/image/payment/mastero.jpg"></a></li>
-                        <li class="visa"><a href="#"><img alt="" src="resources/image/payment/visa.jpg"></a></li>
-                        <li class="currus"><a href="#"><img alt="" src="resources/image/payment/currus.jpg"></a></li>
-                        <li class="discover"><a href="#"><img alt="" src="resources/image/payment/discover.jpg"></a>
+                        <li class="mastero"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/mastero.jpg"></a></li>
+                        <li class="visa"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/visa.jpg"></a></li>
+                        <li class="currus"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/currus.jpg"></a></li>
+                        <li class="discover"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/discover.jpg"></a>
                         </li>
                     </ul>
                 </div>
@@ -303,7 +336,7 @@
     <a id="scrollup">Scroll</a>
 </footer>
 
-<script src="resources/javascript/jquery.parallax.js"></script>
+<script src="${pageContext.request.contextPath}/resources/javascript/jquery.parallax.js"></script>
 <script>
     jQuery(document).ready(function ($) {
         $('.parallax').parallax();

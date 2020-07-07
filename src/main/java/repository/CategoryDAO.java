@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class CategoryDAO implements IDAO{
+public class CategoryDAO implements IDAO {
     private final String categoriesTable = "categories";
     private final String categoryIdColumn = "cat_id";
     private final String categoryNameColumn = "cat_name";
@@ -20,10 +20,10 @@ public class CategoryDAO implements IDAO{
     @Override
     public void create(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
-            try{
+            try {
                 Category category = (Category) object;
                 String categorySql = "INSERT INTO " + categoriesTable + categoryFields + " VALUES (?)";
                 PreparedStatement pstm = conn.prepareStatement(categorySql, Statement.RETURN_GENERATED_KEYS);
@@ -32,13 +32,13 @@ public class CategoryDAO implements IDAO{
 
                 pstm.executeUpdate();
                 ResultSet rs = pstm.getGeneratedKeys();
-                if(rs.next()){
+                if (rs.next()) {
                     int idCategory = rs.getInt(categoryIdColumn);
                     category.setId(idCategory);
                 } else {
                     result.setMsg("error", "An error occurred. The Category entry could not be created.");
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 result.setMsg("error", e.getMessage());
             }
         }
@@ -57,18 +57,15 @@ public class CategoryDAO implements IDAO{
     @Override
     public void findAll(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
-        }
-        else {
+        } else {
             try {
                 Category category = (Category) object;
 
-                String categorySql = "SELECT " + categoryIdColumn +", " + categoryNameColumn + " FROM " + categoriesTable + " WHERE " +
+                String categorySql = "SELECT " + categoryIdColumn + ", " + categoryNameColumn + " FROM " + categoriesTable + " WHERE " +
                         categoryNameColumn + " ILIKE \'%" + category.getName() + "%\';";
                 PreparedStatement pstm = conn.prepareStatement(categorySql, Statement.RETURN_GENERATED_KEYS);
-
-//                pstm.setString(1, "\'%" + category.getName() + "%\'");
 
                 ResultSet rs = pstm.executeQuery();
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
@@ -78,7 +75,7 @@ public class CategoryDAO implements IDAO{
                     c.setId(idCategory);
                     searchResult.add(c);
                 }
-                if(result.hasObject(Category.class.getSimpleName()))
+                if (result.hasObject(Category.class.getSimpleName()))
                     result.removeObject(Category.class.getSimpleName());
                 result.putObject(Category.class.getSimpleName(), searchResult);
             } catch (Exception e) {
@@ -89,15 +86,14 @@ public class CategoryDAO implements IDAO{
 
     @Override
     public void findActive(DomainObject object, Result result) {
-       findAll(object, result);
+        findAll(object, result);
     }
 
-    public void findById(DomainObject object, Result result){
+    public void findById(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
-        }
-        else {
+        } else {
             try {
                 Category category = (Category) object;
 

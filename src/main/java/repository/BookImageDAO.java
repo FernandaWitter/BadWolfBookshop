@@ -23,11 +23,11 @@ public class BookImageDAO implements IDAO {
     @Override
     public void create(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
-            try{
-                Image image = (Image)object;
+            try {
+                Image image = (Image) object;
                 String imageSql = "INSERT INTO " + imageTable + imageFields + " VALUES (?, ?, true)";
                 PreparedStatement pstm = conn.prepareStatement(imageSql, Statement.RETURN_GENERATED_KEYS);
 
@@ -42,11 +42,10 @@ public class BookImageDAO implements IDAO {
                 } else {
                     result.setMsg("error", "An error occurred. The Author entry could not be created.");
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 result.setMsg("error", e.getMessage());
             }
         }
-
     }
 
     @Override
@@ -57,17 +56,17 @@ public class BookImageDAO implements IDAO {
     @Override
     public void delete(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
-            try{
-                Image image = (Image)object;
+            try {
+                Image image = (Image) object;
                 String imageSql = "UPDATE " + imageTable + " SET " + isActiveColumn + " = false WHERE " + idColumn + "=?";
                 PreparedStatement pstm = conn.prepareStatement(imageSql);
 
                 pstm.setInt(1, image.getId());
                 pstm.execute();
-            } catch (Exception e){
+            } catch (Exception e) {
                 result.setMsg("error", e.getMessage());
             }
         }
@@ -76,11 +75,11 @@ public class BookImageDAO implements IDAO {
     @Override
     public void findAll(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
-                Book book = (Book)object;
+                Book book = (Book) object;
                 String imageSql = "SELECT * FROM " + imageTable + " WHERE " + bookFKColumn + " = ?;";
                 PreparedStatement pstm = conn.prepareStatement(imageSql, Statement.RETURN_GENERATED_KEYS);
 
@@ -106,12 +105,12 @@ public class BookImageDAO implements IDAO {
     @Override
     public void findActive(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
-                Book book = (Book)object;
-                String imageSql = "SELECT * FROM " + imageTable + " WHERE "+ isActiveColumn + "=true AND " + bookFKColumn + " = ?;";
+                Book book = (Book) object;
+                String imageSql = "SELECT * FROM " + imageTable + " WHERE " + isActiveColumn + "=true AND " + bookFKColumn + " = ?;";
                 PreparedStatement pstm = conn.prepareStatement(imageSql, Statement.RETURN_GENERATED_KEYS);
 
                 pstm.setInt(1, book.getId());

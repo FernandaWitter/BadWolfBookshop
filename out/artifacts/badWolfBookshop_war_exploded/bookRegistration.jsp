@@ -9,23 +9,23 @@
     <meta name="description" content="e-commerce site well design with responsive view."/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <%--    <link href="resources/image/favicon.png" rel="icon" type="image/png" >--%>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
-    <link href="resources/css/googleFonts.css" rel="stylesheet"/>
-    <link href="resources/css/stylesheet.css" rel="stylesheet">
-    <link href="resources/css/responsive.css" rel="stylesheet">
-    <link href="resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
-    <script type="text/javascript" src="resources/javascript/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/jstree.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/template.js"></script>
-    <script type="text/javascript" src="resources/javascript/common.js"></script>
-    <script type="text/javascript" src="resources/javascript/global.js"></script>
-    <script type="text/javascript" src="resources/javascript/owl-carousel/owl.carousel.min.js"></script>
+    <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/resources/css/googleFonts.css" rel="stylesheet"/>
+    <link href="${pageContext.request.contextPath}/resources/css/stylesheet.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/jstree.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/template.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/common.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/global.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.min.js"></script>
 </head>
 <body class="col-2 left-col">
-<div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
+<div class="preloader loader" style="display: block;"><img src="${pageContext.request.contextPath}/resources/image/loader-circle.gif" alt="#"/></div>
 <header>
     <div class="header-top">
         <div class="container">
@@ -33,7 +33,7 @@
                 <div class="col-sm-12">
                     <div class="top-left pull-left">
                         <div class="wel-come-msg" style="font-size: 24px"><a href="#"><img
-                                src="resources/image/logo_black_small.jpg" title="Bad Wolf Bookshop"
+                                src="${pageContext.request.contextPath}/resources/image/logo_black_small.jpg" title="Bad Wolf Bookshop"
                                 alt="Bad Wolf Bookshop Logo" class="img-responsive"/></a></div>
                     </div>
                     <div class="top-right pull-right">
@@ -66,8 +66,8 @@
                 </li>
                 <li><a href="#" class="active parent">Produtos</a>
                     <ul>
-                        <li><a href="productList.jsp">Listagem de Produtos</a></li>
-                        <li><a href="bookRegistration.jsp">Cadastrar Produto</a></li>
+                        <li><a href="list">Listagem de Produtos</a></li>
+                        <li><a href="new">Cadastrar Produto</a></li>
                     </ul>
                 </li>
                 <li><a href="#" class="active parent">Pedidos</a>
@@ -96,43 +96,47 @@
         <div class="container" style="height:40px;"></div>
         <div class="center-block m-l-40 m-r-40" id="content">
             <%
-                Result result = (Result) request.getAttribute("resultado");
+                Result result = (Result) request.getAttribute("result");
                 Book book = new Book();
-                if(result != null){
-                    if(result.hasMsg("error")){
-                        String [] msgs = result.getMsg("error").split("\n");
-                        out.print("<p>");
-                        for(String s : msgs){
-                            out.print(s+"<br/>");
+                if(result != null) {
+                    if (result.hasMsg("error")) {
+                        String[] msgs = result.getMsg("error").split("\n");
+                        out.print("<p style=\"color:red; font-weight: bold;\"><strong>");
+                        for (String s : msgs) {
+                            out.print(s + "<br/>");
                         }
-                        out.print("</p>");
+                        out.print("</strong></p><br/>");
                     }
-                }
-                ArrayList<DomainObject> books = result.getObject(Book.class.getSimpleName());
-                if(books != null && books.size() > 0)
-                    book = (Book)books.get(0);
 
+                    ArrayList<DomainObject> books = new ArrayList<>();
+                    if (result.hasObject(Book.class.getSimpleName()))
+                        books = result.getObject(Book.class.getSimpleName());
+                    if (books != null && books.size() > 0)
+                        book = (Book) books.get(0);
+                }
                 String operation;
                 if(null == request.getAttribute("operation"))
                     operation = request.getParameter("operation");
                 else
                     operation = request.getAttribute("operation").toString();
+                if(operation == null)
+                    operation = "new";
             %>
-            <h2 class="text-center"><%if(operation.equals("create"))
+            <h2 class="text-center"><%if((operation.equals("new")) || (operation.equals("create")))
                 out.print("Cadastrar Produto");
             else
                 out.print("Editar Produto");
             %></h2>
-            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="productList.jsp">
+            <form class="form-horizontal" method="post">
                 <p>* Campos obrigat&oacute;rios</p>
                 <fieldset>
                     <legend>Produto</legend>
                     <div class="form-group required">
                         <label for="bookTitle" class="col-sm-2 control-label">T&iacute;tulo*</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="bookTitle"
+                            <input type="text" class="form-control" id="bookTitle" name="bookTitle"
                                    placeholder="A informa&ccedil;&atilde;o importante da capa que n&atilde;o &eacute; o autor"
-                                   value="<% if(book.getTitle() != null) out.print(book.getTitle()); %>" name="bookTitle">
+                                   value="<% if(book.getTitle() != null) out.print(book.getTitle()); else out.print(""); %>" >
                         </div>
                     </div>
                     <div class="form-group required">
@@ -143,81 +147,81 @@
                                    value="<% if(book.getAuthors() != null && book.getAuthors().size() > 0){
                                        String authors = "";
                                    for (Author a : book.getAuthors()){
-                                       if(!authors.equals("")) authors += "; ";
                                        authors += a.getName();
+                                       authors += "; ";
                                    }
                                    if(authors.length() > 2) authors = authors.substring(0, authors.length()-2);
                                    out.print(authors);
-                                   }%>" name="bookAuthor">
+                                   } else out.print("");%>" name="bookAuthor">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="bookPublisher" class="col-sm-2 control-label">Editora*</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="bookPublisher"
-                                   placeholder="Quem comprou os direitos autorais e vai ganhar dinheiro" value="<%if (book.getPublisher() != null && book.getPublisher().getName() != null) out.print(book.getPublisher().getName())%>"
-                                   name="confirm">
+                            <input type="text" class="form-control" id="bookPublisher" name="bookPublisher"
+                                   placeholder="Quem comprou os direitos autorais e vai ganhar dinheiro" value="<%if (book.getPublisher() != null && book.getPublisher().getName() != null) out.print(book.getPublisher().getName()); else out.print("");%>">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="bookYear" class="col-sm-2 control-label">Ano*</label>
                         <div class="col-sm-2">
-                            <input type="numeric" class="form-control" id="bookYear"
-                                   placeholder="ex. 1995" value="<%if(book.getPubYear() != null) out.print(book.getPubYear());%>" name="bookYear">
+                            <input type="number" class="form-control" id="bookYear"
+                                   placeholder="ex. 1995" value="<%if(book.getPubYear() != null) out.print(book.getPubYear()); else out.print("");%>" name="bookYear">
                         </div>
                         <label for="bookEdition" class="col-sm-1 control-label">Edi&ccedil;&atilde;o*</label>
                         <div class="col-sm-3">
-                            <input type="numeric" class="form-control" id="bookEdition"
-                                   placeholder="ex. 1" value="<%if(book.getPubEdition() != null) out.print(book.getPubEdition());%>" name="bookEdition">
+                            <input type="number" class="form-control" id="bookEdition"
+                                   placeholder="ex. 1" value="<%if(book.getPubEdition() != null) out.print(book.getPubEdition()); else out.print("");%>" name="bookEdition">
                         </div>
                         <label for="bookLanguage" class="col-sm-1 control-label">Idioma*</label>
                         <div class="col-sm-3">
                             <input type="text" class="form-control" id="bookLanguage"
-                                   placeholder="ex. Ingl&ecirc;s" value="<%if(book.getLanguage() != null) out.print(book.getLanguage());%>" name="bookLanguage">
+                                   placeholder="ex. Ingl&ecirc;s" value="<%if(book.getLanguage() != null) out.print(book.getLanguage()); else out.print("");%>" name="bookLanguage">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="bookISBN" class="col-sm-2 control-label">ISBN*</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="bookISBN"
-                                   placeholder="ex. 978-1338306125" value="<%if(book.getIsbn() != null) out.print(book.getIsbn());%>" name="bookISBN">
+                            <input type="number" class="form-control" id="bookISBN"
+                                   placeholder="ex. 978-1338306125" value="<%if(book.getIsbn() != null) out.print(book.getIsbn()); else out.print("");%>" name="bookISBN">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="bookGenres" class="col-sm-2 control-label">Categorias*</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="bookGenres"
-                                   placeholder="Separadas por ponto-e-v&iacute;rgula: romance; aventura; fantasia" value="<% if(book.getAuthors() != null && book.getAuthors().size() > 0){
+                                   placeholder="Separadas por ponto-e-v&iacute;rgula: romance; aventura; fantasia" value="<% if(book.getCategories() != null && book.getCategories().size() > 0){
                                        String categories = "";
                                    for (Category c : book.getCategories()){
-                                       if(!categories.equals("")) categories += "; ";
                                        categories += c.getName();
+                                       categories += "; ";
                                    }
                                    if(categories.length() > 2) categories = categories.substring(0, categories.length()-2);
                                    out.print(categories);
-                                   }%>" name="bookGenres">
+                                   } else out.print("");%>" name="bookGenres">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="bookSummary" class="col-sm-2 control-label">Sinopse*</label>
                         <div class="col-sm-10">
-                            <textarea rows="10" id="bookSummary" class="form-control" name="bookSummary"></textarea>
+                            <textarea rows="10" id="bookSummary" class="form-control" name="bookSummary"><%if(book.getSummary() != null) out.print(book.getSummary()); else out.print("");%></textarea>
                         </div>
                     </div>
                 </fieldset>
                 <fieldset id="images" class="m-t-10">
                     <legend>Imagens</legend>
-                    <div class="form-group">
                     <%if(book.getImages() != null && book.getImages().size() > 0){
                         for(Image i : book.getImages()){
-                            out.print("<label for=\"bookImage\" class=\"col-sm-2 control-label\">Imagem do livro</label>");
+                            out.print("<div class=\"form-group\">");
+                            out.print("<label for=\"bookImage\" class=\"col-sm-2 control-label\">Caminho da Imagem:</label>");
                             out.print("<div class=\"col-sm-10\">");
                             out.print("<input type=\"text\" id=\"bookImage\" class=\"form-control\" name=\"bookImage[]\" value=\"" + i.getPath() + "\">");
                             out.print("</div>");
                             out.print("</div>");
                         }
                     }%>
-                        <label for="bookImage" class="col-sm-2 control-label">Capa</label>
+                    <div class="form-group">
+                        <label for="bookImage" class="col-sm-2 control-label">Caminho da Imagem:</label>
                         <div class="col-sm-10">
                            <input type="text" id="bookImage" class="form-control" name="bookImage[]">
                             </div>
@@ -231,30 +235,30 @@
                     <div class="form-group">
                         <label for="bookHeight" class="col-sm-2 control-label">Altura (cm)*</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookHeight"
-                                   placeholder="ex. 21,6" value="<%if(book.getHeight() != null) out.print(book.getHeight());%>" name="bookHeight">
+                            <input type="number" class="form-control" id="bookHeight" step="0.01"
+                                   placeholder="ex. 21,6" value="<%if(book.getHeight() != null) out.print(book.getHeight()); else out.print("");%>" name="bookHeight">
                         </div>
                         <label for="bookWidth" class="col-sm-2 control-label">Largura (cm)*</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookWidth"
-                                   placeholder="ex. 14,6" value="<%if(book.getWidth() != null) out.print(book.getWidth());%>" name="bookWidth">
+                            <input type="number" class="form-control" id="bookWidth" step="0.01"
+                                   placeholder="ex. 14,6" value="<%if(book.getWidth() != null) out.print(book.getWidth()); else out.print("");%>" name="bookWidth">
                         </div>
                         <label for="bookDepth" class="col-sm-2 control-label">Profundidade (cm)*</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookDepth"
-                                   placeholder="ex. 2,5" value="<%if(book.getDepth() != null) out.print(book.getDepth());%>" name="bookDepth">
+                            <input type="number" class="form-control" id="bookDepth" step="0.01"
+                                   placeholder="ex. 2,5" value="<%if(book.getDepth() != null) out.print(book.getDepth()); else out.print("");%>" name="bookDepth">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="bookWeight" class="col-sm-2 control-label">Peso (g)*</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookWeight"
-                                   placeholder="ex. 340" value="<%if(book.getWeight() != null) out.print(book.getWeight());%>" name="bookWeight">
+                            <input type="number" class="form-control" id="bookWeight" step="0.01"
+                                   placeholder="ex. 340" value="<%if(book.getWeight() != null) out.print(book.getWeight()); else out.print("");%>" name="bookWeight">
                         </div>
                         <label for="bookPages" class="col-sm-2 control-label">P&aacute;ginas*</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookPages"
-                                   placeholder="ex. 248" value="<%if(book.getPages() != null) out.print(book.getPages());%>" name="bookPages">
+                            <input type="number" class="form-control" id="bookPages"
+                                   placeholder="ex. 248" value="<%if(book.getPages() != null) out.print(book.getPages()); else out.print("");%>" name="bookPages">
                         </div>
                     </div>
                 </fieldset>
@@ -267,12 +271,14 @@
                         <div class="col-sm-2">
                             <input type="text" class="form-control text-right p-r-10" id="bookPrice"
                                    value="<%if(book.getPrice() != null) out.print(book.getPrice());
-                                   else out.print(0.00);%>" name="bookPrice" disabled>
+                                   else out.print(0.00);%>"  disabled>
+                            <input type="hidden" name="bookPrice" value="<%if(book.getPrice() != null) out.print(book.getPrice());
+                                   else out.print(0.00);%>">
                         </div>
                         <label for="bookNewPrice" class="col-sm-2 control-label">Novo Pre&ccedil;o</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookNewPrice"
-                                   placeholder="ex. 24.48" value="" name="bookNewPrice">
+                            <input type="number" class="form-control" id="bookNewPrice" name="bookNewPrice" step="0.01"
+                                   placeholder="ex. 24.48" value="" >
                         </div>
                     </div>
                     <p>O valor informado ser&aacute; acrescido &agrave;s unidades existentes em estoque.</p>
@@ -281,12 +287,14 @@
                         <div class="col-sm-2">
                             <input type="text" class="form-control text-right p-r-10" id="booksInStock"
                                    value="<%if(book.getInStock() != null) out.print(book.getInStock());
-                                   else out.print(0);%>" name="booksInStock" disabled>
+                                   else out.print(0);%>"  disabled>
+                            <input type="hidden" name="booksInStock" value="<%if(book.getInStock() != null) out.print(book.getInStock());
+                                   else out.print(0);%>">
                         </div>
                         <label for="bookNewUnits" class="col-sm-2 control-label">Novas Unidades</label>
                         <div class="col-sm-2">
-                            <input type="text" class="form-control" id="bookNewUnits"
-                                   placeholder="ex. 19" value="" name="bookNewUnits">
+                            <input type="number" class="form-control" id="bookNewUnits" name="bookNewUnits"
+                                   placeholder="ex. 19" value="" >
                         </div>
                     </div>
                 </fieldset>
@@ -294,10 +302,11 @@
                 <div class="buttons">
                     <div class="pull-right">
                         <%
-                            if("create".equals(operation)){
-                                out.print("<button class=\"btn btn-primary\" value=\"create\" name=\"operation\" type=\"submit\">Cadastrar</button>");
+                            if("new".equals(operation) || "create".equals(operation)){
+                                out.print("<input class=\"btn btn-primary\" value=\"Cadastrar\" name=\"operation\" type=\"submit\" formaction=\"create\"/>");
                             } else {
-                                out.print("<button class=\"btn btn-primary\" value=\"update\" name=\"operation\" type=\"submit\">Salvar</button>");
+                                out.print("<button class=\"btn btn-primary\" value=\"update\" name=\"operation\" type=\"submit\" formaction=\"update\">Salvar</button>");
+                                out.print("<input type=\"hidden\" name=\"bookId\" value=\"" + book.getId() + "\">");
                             }
                         %>
 <%--                        <input type="submit" class="btn btn-primary" value="Salvar">--%>
@@ -325,7 +334,7 @@
         var addButton = $('#addImage');
         var wrapper = $('#bookExtraImages');
         var fieldHTML = '<div class="form-group">\n' +
-                '                        <label for="bookImage" class="col-sm-2 control-label">Imagem Extra</label>\n' +
+                '                        <label for="bookImage" class="col-sm-2 control-label">Caminho da Imagem:</label>\n' +
                 '                        <div class="col-sm-10">\n' +
                 '                            <input type="text" id="bookImage" class="form-control" name="bookImage[]">\n' +
                 '                        </div>\n' +

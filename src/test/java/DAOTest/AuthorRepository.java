@@ -11,7 +11,7 @@ public class AuthorRepository {
     public static void main(String[] args) {
         Author author = new Author("My first author");
         AuthorDAO dao = new AuthorDAO();
-        try{
+        try {
             Connection conn = new DBConnection().getConnection();
 //            DBConnection db = new DBConnection();
 //            Connection conn = DBConnection.getConnection();
@@ -21,7 +21,7 @@ public class AuthorRepository {
             dao.findActive(author, res);
             System.out.println("From author obj: " + author.getId());
 //            System.out.println("Error: " + result.getMsg("error"));
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

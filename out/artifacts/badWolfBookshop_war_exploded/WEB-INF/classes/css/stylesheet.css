@@ -3297,6 +3297,10 @@ div.dioprogress_size_l {
 	color: #189b79 !important;
 }
 
+.text-red{
+	color: #FF0000 !important;
+}
+
 /* Modal Content/Box */
 .cvv-modal {
     background: url(image/Credit-Card-CVV.png);
@@ -3310,4 +3314,8 @@ div.dioprogress_size_l {
     float: right;
     font-size: 28px;
     font-weight: bold;
+}
+
+#book-thumb{
+	max-height: 50px !important;
 }

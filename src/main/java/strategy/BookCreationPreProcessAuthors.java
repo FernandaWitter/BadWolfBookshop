@@ -6,7 +6,7 @@ import repository.AuthorDAO;
 public class BookCreationPreProcessAuthors implements IStrategy {
     @Override
     public void process(DomainObject object, Result result) {
-        if(result.getMsg("error") == null) {
+        if (result.getMsg("error") == null) {
             Book book = (Book) object;
             AuthorDAO authorDAO = new AuthorDAO();
             // Verify if author already exists and, if not, create it

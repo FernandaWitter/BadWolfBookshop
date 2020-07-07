@@ -1,3 +1,9 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="domain.Result" %>
+<%@ page import="domain.DomainObject" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
+<%@ page import="domain.CreditCard" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,7 +50,7 @@
                             </form>
                         </div>
                         <div class="currency">
-                            <form action="#" method="post" enctype="multipart/form-data" id="currency">
+                            <form action="${pageContext.request.contextPath}/alterCards" method="post" id="currency">
                                 <div class="btn-group">
                                     <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
                                         <strong>USD</strong> <span class="caret"></span></button>
@@ -66,11 +72,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
-                                        <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
+                                        <li><a href="${pageContext.request.contextPath}/profile">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -87,20 +97,27 @@
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
                 <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -138,6 +155,13 @@
 <%--        <li><a href="register.html">Register</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<%
+    Result result;
+    if(request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+%>
 <div class="container">
     <div class="row">
         <div class="col-sm-3 hidden-xs column-left m-t-40" id="column-left">
@@ -145,10 +169,10 @@
                 <div class="columnblock-title">Dados do Usu&aacute;rio</div>
                 <div class="category_block">
                     <ul class="box-category">
-                        <li><a href="editClientPersonalData.jsp">Dados Pessoais</a></li>
-                        <li><a href="editClientAddressData.jsp">Endere&ccedil;os</a></li>
-                        <li><a href="#">Formas de Pagamento</a></li>
-                        <li><a href="alterPassword.jsp  ">Alterar Senha</a></li>
+                        <li><a href="${pageContext.request.contextPath}/profile">Dados Pessoais</a></li>
+                        <li><a href="${pageContext.request.contextPath}/address">Endere&ccedil;os</a></li>
+                        <li><a href="${pageContext.request.contextPath}/cards">Formas de Pagamento</a></li>
+                        <li><a href="${pageContext.request.contextPath}/credentials">Alterar Senha</a></li>
                         <li><a href="removeAccount.jsp">Excluir Conta</a></li>
                     </ul>
                 </div>
@@ -157,45 +181,65 @@
         <div class="container" style="height:40px;"></div>
         <div class="center-block m-l-40 m-r-40" id="content">
             <h2 class="text-center">Formas de Pagamento</h2>
-            <form class="form-horizontal m-l-10 p-l-10" enctype="multipart/form-data" method="post" action="#">
+            <form class="form-horizontal m-l-10 p-l-10" method="post" action="${pageContext.request.contextPath}/alterCards">
+                <p>O pagamento pode ser realizado por meio de cupons de troca ou cart&atilde;o de cr&eacute;dito</p>
                 <p>* Campos obrigat&oacute;rios</p>
                 <fieldset>
-                    <legend>Principal
+                    <%
+                        int max = 1;
+                        List<DomainObject> cards = new ArrayList<>();
+                        if(result.hasObject(CreditCard.class.getSimpleName()))
+                            cards = result.getObject(CreditCard.class.getSimpleName());
+                        if(cards.size() > 0)
+                            max = cards.size();
+                        CreditCard c = new CreditCard();
+                        for(int i = 0; i < max; i++){
+                            if(cards.size() > i)
+                                c = (CreditCard) cards.get(i);
+                    %>
+                    <legend class="card-label"><%out.print(c.getCardCompany() != null ? c.getCardCompany().getName() + " terminado em " + c.getCardNumber().substring(12,16) : "Cadastre um cart&atilde;o...");%>
                         <button class="btn btn-danger pull-right" style="height:30px;"><i class="fa fa-remove"></i> </button>
                     </legend>
-                    <p>O pagamento pode ser realizado por meio de boleto banc&aacute;rio ou cart&atilde;o de cr&eacute;dito.
-                        Para entregas fora do territ&oacute;rio brasileiro, o pagamento deve obrigat&oacute;riamente ser
-                        realizado com cart&atilde;o de cr&eacute;dito.</p>
+                    <input type="hidden" class="form-control" id="cardExpiration0"
+                           name="<%out.print("card[" + i + "][id]");%>"
+                           value="<%out.print(c.getId() != null ? c.getId() : "");%>">
                     <div class="form-group">
                         <label for="cardCompany0" class="col-sm-3 control-label">Bandeira</label>
                         <div class="col-sm-3">
-                            <select class="form-control" id="cardCompany0" name="cardCompany0">
+                            <select class="form-control" id="cardCompany0"
+                                    name="<%out.print("card[" + i + "][cardCompany]");%>">
                                 <option value=""> -- Selecione --</option>
-                                <option value="master">Mastercard</option>
-                                <option value="visa">Visa</option>
-                                <option value="amex">American Express</option>
-                                <option value="diners">Diner\'s Club</option>
-                                <option value="cirrus">Cirrus</option>
-                                <option value="discovery">Discovery</option>
+                                <option value="1" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 1 ? "selected" : "");%>>Mastercard</option>
+                                <option value="2" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 2 ? "selected" : "");%>>Visa</option>
+                                <option value="3" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 3 ? "selected" : "");%>>American Express</option>
+                                <option value="4" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 4 ? "selected" : "");%>>Diner\'s Club</option>
+                                <option value="5" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 5 ? "selected" : "");%>>Cirrus</option>
+                                <option value="6" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 6 ? "selected" : "");%>>Discovery</option>
+                                <option value="6" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 7 ? "selected" : "");%>>Elo</option>
+                                <option value="6" <%out.print(c.getCardCompany() != null && c.getCardCompany().getCode() == 8 ? "selected" : "");%>>Outro</option>
                             </select>
                         </div>
                         <label class="col-sm-3 control-label " for="cardExpiration0">Data
                             de Expira&ccedil;&atilde;o</label>
                         <div class="col-sm-3">
                             <input type="text" class="form-control" id="cardExpiration0"
-                                   name="cardExpiration0">
+                                   name="<%out.print("card[" + i + "][cardExpiration]");%>"
+                                   value="<%out.print(c.getExpiration() != null ? c.getExpiration() : "");%>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label" for="cardNumber0">N&uacute;mero do cart&atilde;o</label>
                         <div class="col-sm-5">
                             <input type="text" class="form-control" id="cardNumber0"
-                                   name="cardNumber0" placeholder="ex. 9999 9999 9999 9999">
+                                   placeholder="ex. 9999 9999 9999 9999"
+                                   name="<%out.print("card[" + i + "][cardNumber]");%>"
+                                   value="<%out.print(c.getCardNumber() != null ? c.getCardNumber() : "");%>">
                         </div>
                         <label class="col-sm-1 control-label" for="cvv-btn">CVV</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" id="cvv-btn"
-                                   name="cardExpiration0">
+                                   name="<%out.print("card[" + i + "][cvv]");%>"
+                                   value="<%out.print(c.getCvv() != null ? c.getCvv() : "");%>">
                         </div>
                         <div class="col-sm-1 text-center">
                             <a href="#" onclick="window.open('resources/image/Credit-Card-CVV.png');return false;"><i
@@ -205,21 +249,23 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="cardName0">Nome do Titular</label>
                         <div class="col-sm-8">
-                            <input type="number" class="form-control" id="cardName0" name="cardName0"
-                                   placeholder="Exatamente como aparece no cart&atilde;o">
+                            <input type="text" class="form-control" id="cardName0"
+                                   placeholder="Exatamente como aparece no cart&atilde;o"
+                                   name="<%out.print("card[" + i + "][cardName]");%>"
+                                   value="<%out.print(c.getHolderName() != null ? c.getHolderName() : "");%>">
                         </div>
                         <label class="col-sm-1 control-label text-right" for="isMainCard0">Principal?</label>
                         <input type="checkbox" class="col-sm-1 text-right" id="isMainCard0" name="isMainCard0" checked>
                     </div>
+                    <%}%>
                     <div id="new-card-wrapper"></div>
                     <div class="row">
-                        <a class="btn btn-primary m-t-40 pull-right" id="addCard">Adicionar Cart&atilde;o</a>
+                        <a class="btn btn-primary m-t-40 pull-right" id="addCard">Adicionar Novo Cart&atilde;o</a>
                     </div>
                     <div class="m-t-40"></div>
                     <div class="buttons clearfix">
-                        <div class="pull-left"><a href="index.jsp" class="btn btn-default">Cancelar</a></div>
                         <div class="pull-right">
-                            <input type="submit" value="Continuar" class="btn btn-primary"/>
+                            <input type="submit" value="Salvar" class="btn btn-primary"/>
                         </div>
                     </div>
                 </fieldset>
@@ -367,64 +413,73 @@
         $('.parallax').parallax();
         var addCard = $('#addCard');
         var cardWrapper = $('#new-card-wrapper');
-        var cardFieldHTML = '<hr/><div id="card-form" class="m-t-40">\n' +
-            '<form>\n' +
-            '<div class="form-group">\n' +
-            '<label for="cardCompany0" class="col-sm-3 control-label">Bandeira</label>\n' +
-            '<div class="col-sm-3">\n' +
-            '<select class="form-control" id="cardCompany0" name="cardCompany0">\n' +
-            '<option value=""> -- Selecione --</option>\n' +
-            '<option value="master">Mastercard</option>\n' +
-            '<option value="visa">Visa</option>\n' +
-            '<option value="amex">American Express</option>\n' +
-            '<option value="diners">Diner\'s Club</option>\n' +
-            '<option value="cirrus">Cirrus</option>\n' +
-            '<option value="discovery">Discovery</option>\n' +
-            '</select>\n' +
-            '</div>\n' +
-            '<label class="col-sm-3 control-label " for="cardExpiration0">Data\n' +
-            'de Expira&ccedil;&atilde;o</label>\n' +
-            '<div class="col-sm-3">\n' +
-            '<input type="text" class="form-control" id="cardExpiration0"\n' +
-            'name="cardExpiration0">\n' +
-            '</div>\n' +
-            '</div>\n' +
-            '<div class="form-group">\n' +
-            '<label class="col-sm-3 control-label" for="cardNumber0">N&uacute;mero do\n' +
-            'cart&atilde;o</label>\n' +
-            '<div class="col-sm-5">\n' +
-            '<input type="text" class="form-control" id="cardNumber0"\n' +
-            'name="cardNumber0" placeholder="ex. 9999 9999 9999 9999">\n' +
-            '</div>\n' +
-            '<label class="col-sm-1 control-label" for="CVV">CVV</label>\n' +
-            '<div class="col-sm-2">\n' +
-            '<input type="text" class="form-control" id="CVV"\n' +
-            'name="cardExpiration0">\n' +
-            '</div>\n' +
-            '<div class="col-sm-1 text-center">\n' +
-            '<a href="#" onclick="window.open(\'resources/image/Credit-Card-CVV.png\');return false;"><i ' +
-            'class="fa fa-question"></i></a>\n' +
-            '</div>\n' +
-            '</div>\n' +
-            '<div class="form-group">\n' +
-            '<label class="col-sm-2 control-label" for="cardName0">Nome do\n' +
-            'Titular</label>\n' +
-            '<div class="col-sm-8">\n' +
-            '<input type="number" class="form-control" id="cardName0"\n' +
-            'name="cardName0"\n' +
-            'placeholder="Exatamente como aparece no cart&atilde;o">\n' +
-            '</div>\n' +
-            '<label class="col-sm-1 control-label text-right" for="isMainCard0">Salvar?</label>\n' +
-            '<input type="checkbox" class="col-sm-1 text-right" id="isMainCard0"\n' +
-            'name="isMainCard0" checked>\n' +
-            '</div>\n' +
-            '</div>\n' +
-            '</form>\n' +
-            '</div>';
 
         $(addCard).click(function () {
+            var cardCounter = document.getElementsByClassName('card-label').length;
+            var cardFieldHTML = '<hr/><div id="card-form" class="m-t-40">\n' +
+                '<form>\n' +
+                '<div class="form-group">\n' +
+                '<div class="row">\n' +
+                '<label for="cardCompany0" class="col-sm-3 control-label">Bandeira</label>\n' +
+                '<div class="col-sm-3">\n' +
+                '<select class="form-control" id="cardCompany0" name="card[' + cardCounter + '][company]">\n' +
+                '<option value=""> -- Selecione --</option>\n' +
+                '<option value="1">Mastercard</option>\n' +
+                '<option value="2">Visa</option>\n' +
+                '<option value="3">American Express</option>\n' +
+                '<option value="4">Diner\'s Club</option>\n' +
+                '<option value="5">Cirrus</option>\n' +
+                '<option value="6">Discovery</option>\n' +
+                '<option value="7">Elo</option>\n' +
+                '<option value="8">Outro</option>\n' +
+                '</select>\n' +
+                '</div>\n' +
+                '<label class="col-sm-3 control-label " for="cardExpiration0">Data\n' +
+                'de Expira&ccedil;&atilde;o</label>\n' +
+                '<div class="col-sm-3">\n' +
+                '<input type="text" class="form-control" id="cardExpiration0"\n' +
+                'name="card[' + cardCounter + '][expiration]">\n' +
+                '</div>\n' +
+                '</div>\n' +
+                '<div class="form-group">\n' +
+                '<label class="col-sm-3 control-label" for="cardNumber0">N&uacute;mero do\n' +
+                'cart&atilde;o</label>\n' +
+                '<div class="col-sm-5">\n' +
+                '<input type="text" class="form-control" id="cardNumber0"\n' +
+                'name="card[' + cardCounter + '][number]" placeholder="ex. 9999 9999 9999 9999">\n' +
+                '</div>\n' +
+                '\n' +
+                '<label class="col-sm-1 control-label" for="CVV">CVV</label>\n' +
+                '<div class="col-sm-2">\n' +
+                '<input type="text" class="form-control" id="CVV"\n' +
+                'name="card[' + cardCounter + '][cvv]">\n' +
+                '</div>\n' +
+                '<div class="col-sm-1 text-center">\n' +
+                '<a href="#" onclick="window.open(\'resources/image/Credit-Card-CVV.png\');return false;"><i ' +
+                'class="fa fa-question"></i></a>\n' +
+                '</div>\n' +
+                '</div>\n' +
+                '</div>\n' +
+                '<div class="row">\n' +
+                '<div class="form-group">\n' +
+                '<label class="col-sm-2 control-label" for="cardName0">Nome do\n' +
+                'Titular</label>\n' +
+                '<div class="col-sm-8">\n' +
+                '<input type="text" class="form-control" id="cardName0"\n' +
+                'name="card[' + cardCounter + '][name]"\n' +
+                'placeholder="Exatamente como aparece no cart&atilde;o">\n' +
+                '</div>\n' +
+                '<label class="col-sm-1 control-label text-right" for="isMainCard0">Cart&atilde;o Principal?</label>\n' +
+                '<input type="checkbox" class="col-sm-1 text-right" id="isMainCard0"\n' +
+                'name="card[' + cardCounter + '][isMainCard]" checked>\n' +
+                '</div>\n' +
+                '</div>\n' +
+                '</form>\n' +
+                '</div>';
             $(cardWrapper).append(cardFieldHTML);
+            cardCounter++;
         })
+
     });
 </script>
 </body>

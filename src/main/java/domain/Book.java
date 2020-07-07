@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -12,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book extends DomainObject{
+public class Book extends DomainObject {
     private String title;
     private List<Author> authors;
     private Publisher publisher;
@@ -30,4 +31,14 @@ public class Book extends DomainObject{
     private Double price;
     private Integer inStock;
     private Integer pages;
+
+    public Book(int id) {
+        this.setId(id);
+    }
+
+    public void addImage(Image image) {
+        if (this.images == null)
+            this.images = new ArrayList<>();
+        images.add(image);
+    }
 }

@@ -1,3 +1,8 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="domain.Result" %>
+<%@ page import="dto.BookDTO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="domain.DomainObject" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,11 +71,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -87,20 +96,27 @@
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
                 <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -137,139 +153,32 @@
 <%--        <li><a href="category.html">Electronics</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<%
+    Result result;
+    if(request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+    if(result.hasObject(BookDTO.class.getSimpleName())){
+        List<DomainObject> results = result.getObject(BookDTO.class.getSimpleName());
+%>
 <div class="container">
     <div class="row">
         <div id="column-left" class="col-sm-3 hidden-xs column-left m-t-40">
             <div class="Categories left-sidebar-widget">
-                <div class="columnblock-title">Categorias</div>
+                <div class="columnblock-title">Busca</div>
                 <div class="category_block">
-                    <ul class="box-category treeview">
-                        <li><a href="#" class="activSub">Livros</a>
-                            <ul>
-                                <li><a href="#">Importados</a></li>
-                                <li><a href="#">Fantasia</a></li>
-                                <li><a href="#">Infantil</a></li>
-                                <li><a href="#">Aventura</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#" class="activSub">E-books</a>
-                            <ul>
-                                <li><a href="#">Importados</a></li>
-                                <li><a href="#">Fantasia</a></li>
-                                <li><a href="#">Infantil</a></li>
-                                <li><a href="#">Aventura</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#" class="activSub">Audiolivros</a>
-                            <ul>
-                                <li><a href="#">Importados</a></li>
-                                <li><a href="#">Fantasia</a></li>
-                                <li><a href="#">Infantil</a></li>
-                                <li><a href="#">Aventura</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Revistas</a></li>
-<%--                        <li><a href="#">CDs, DVDs, e Blu-ray</a></li>--%>
-<%--                        <li><a href="#">Divers&atilde;o</a>--%>
-<%--                        <li><a href="#" class="activSub">Jogos</a>--%>
-<%--                            <ul>--%>
-<%--                                <li><a href="#">PC</a></li>--%>
-<%--                                <li><a href="#">PS4</a></li>--%>
-<%--                                <li><a href="#">Xbox</a></li>--%>
-<%--                            </ul>--%>
-<%--                        </li>--%>
-<%--                        <li><a href="#">Brinquedos</a></li>--%>
-<%--                        <li><a href="#">Quebra-Cabe&ccedil;as</a></li>--%>
-                    </ul>
-                </div>
-            </div>
-            <div class="filter left-sidebar-widget">
-                <div class="columnblock-title">Filtrar Busca</div>
-                <div class="filter-block">
-                    <div class="list-group">
-                        <p class="list-group-item">Encadernamento</p>
-                        <div class="list-group-item">
-                            <div id="filter-group1">
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="1"/>
-                                    Capa Dura (27)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="2"/>
-                                    Brochura (46)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="3"/>
-                                    E-book (13)</label>
-                            </div>
-                        </div>
-                        <p class="list-group-item">Pre&ccedil;o</p>
-                        <div class="list-group-item">
-                            <div id="filter-group2">
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="4"/>
-                                    $0 - $50 (53)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="4"/>
-                                    $50-$100 (65)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="5"/>
-                                    $101-$500 (42)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="4"/>
-                                    $500 ou mais (3)</label>
-                            </div>
-                        </div>
-                        <p class="list-group-item">Autor</p>
-                        <div class="list-group-item">
-                            <div id="filter-group3">
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="6"/>
-                                    JK Rowling (93)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="7"/>
-                                    Jody Revenson (4)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="8"/>
-                                    Felicity Baker (1)</label>
-                                <label class="checkbox">
-                                    <input name="filter[]" type="checkbox" value="8"/>
-                                    Outros (37)</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-footer">
-                        <button type="button" id="button-filter" class="btn btn-primary">Filtrar</button>
-                    </div>
+
                 </div>
             </div>
         </div>
-        <div class=" content col-sm-9">
-            <br/>
-            <p>Sua busca por <strong>Harry Potter</strong> retornou <strong>245</strong> resultados.</p>
-            <br/>
+        <div class=" content col-sm-9 m-t-40">
             <div class="category-page-wrapper">
                 <div class="col-md-2 text-right sort-wrapper">
-                    <label class="control-label" for="input-sort">Ordenar :</label>
-                    <div class="sort-inner">
-                        <select id="input-sort" class="form-control">
-                            <option value="ASC" selected="selected">Mais Vendidos</option>
-                            <option value="ASC">Nome (A - Z)</option>
-                            <option value="DESC">Nome (Z - A)</option>
-                            <option value="ASC">Pre&ccedil;o (Menor &gt; Maior)</option>
-                            <option value="DESC">Pre&ccedil;o (Maior &gt; Menor)</option>
-                        </select>
-                    </div>
+                    <p>Sua busca por <strong><%out.print(request.getParameter("q"));%></strong> retornou <strong><%out.print(results.size());%></strong> resultados.</p>
                 </div>
                 <div class="col-md-1 text-right page-wrapper">
-                    <label class="control-label" for="input-limit">Exibir :</label>
-                    <div class="limit">
-                        <select id="input-limit" class="form-control">
-                            <option value="8" selected="selected">12</option>
-                            <option value="25">24</option>
-                            <option value="50">48</option>
-                            <option value="75">96</option>
-                            <option value="100">Todos</option>
-                        </select>
-                    </div>
+
                 </div>
                 <div class="col-md-6 list-grid-wrapper">
                     <div class="btn-group btn-list-grid">
@@ -282,15 +191,18 @@
             </div>
             <br/>
             <div class="grid-list-wrapper">
-                <% for (int i = 0; i < 12; i++) {%>
+                <%
+                    for(DomainObject d : results){
+                       BookDTO book = (BookDTO) d;
+                %>
                 <div class="product-layout product-list col-xs-12">
                     <div class="product-thumb">
-                        <div class="image product-imageblock m-l-40 p-l-40">
-                            <a href="bookDetail.jsp">
-                                <img src="resources/image/book-front-50x64.jpg" alt="Livro"
-                                     title="Capa do Livro" class="img-responsive"/>
-                                <img src="resources/image/book-front-150x192.jpg" alt="Livro"
-                                     title="Capa do Livro" class="img-responsive"/>
+                        <div class="image product-imageblock m-l-10">
+                            <a href="${pageContext.request.contextPath}/book/<%out.print(book.getId());%>">
+                                <img src="<%out.print(book.getImagePath());%>" alt="Capa do livro"
+                                     title="Capa do Livro" style="max-height: 200px;"/>
+                                <img src="<%out.print(book.getImagePath());%>" alt="Capa do livro"
+                                    title="Capa do Livro" style="max-height: 200px;"/>
                             </a>
                             <ul class="button-group grid-btn">
                                 <li>
@@ -313,15 +225,8 @@
                                         class="fa fa-thumbs-o-up fa-stack-2x"></i><i
                                         class="fa fa-thumbs-up fa-stack-2x"></i></span> <span class="fa fa-stack"><i
                                         class="fa fa-thumbs-o-up fa-stack-2x"></i></span></div>
-                            <h4 class="product-name"><a href="#" title="product-name">Nome do Produto</a></h4>
-                            <p class="price product-price">$122.00</p>
-                            <p class="product-desc"> Descri&ccedil;&atilde;o do produto.
-
-                                Aqui voc&ecirc; pode descobrir mais dados sobre o produto
-
-                                Algum detalhe importante
-
-                                Ou o come&ccedil;o da resenha do livro...</p>
+                            <h4 class="product-name"><a href="#" title="product-name"><%out.print(book.getTitle());%></a></h4>
+                            <p class="price product-price">$<%out.print(String.format("%.2f", book.getPrice()));%></p>
                             <ul class="button-group list-btn">
                                 <li>
                                     <button type="button" class="wishlist" data-toggle="tooltip" data-placement="top"
@@ -337,19 +242,14 @@
                         </div>
                     </div>
                 </div>
+                <%}} else {%>
+                <div class="text-center">
+                    <br/>
+                    <p>Sua busca por <strong><%out.print(request.getParameter("q"));%></strong> n&atilde;o retornou nenhum resultado.</p>
+                </div>
                 <%}%>
             </div>
-            <div class="category-page-wrapper">
-                <div class="result-inner">Exibindo 1 a 12 de 245 (21 P&aacute;ginas)</div>
-                <div class="pagination-inner">
-                    <ul class="pagination">
-                        <li class="active"><span>1</span></li>
-                        <li><a href="bookSearch.jsp">2</a></li>
-                        <li><a href="bookSearch.jsp">&gt;</a></li>
-                        <li><a href="bookSearch.jsp">&gt;|</a></li>
-                    </ul>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

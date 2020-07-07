@@ -1,3 +1,7 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.util.List" %>
+<%@ page import="domain.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,23 +11,23 @@
     <meta name="description" content="e-commerce site well design with responsive view."/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <%--    <link href="resources/image/favicon.png" rel="icon" type="image/png" >--%>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
-    <link href="resources/css/googleFonts.css" rel="stylesheet"/>
-    <link href="resources/css/stylesheet.css" rel="stylesheet">
-    <link href="resources/css/responsive.css" rel="stylesheet">
-    <link href="resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
-    <script type="text/javascript" src="resources/javascript/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/jstree.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/template.js"></script>
-    <script type="text/javascript" src="resources/javascript/common.js"></script>
-    <script type="text/javascript" src="resources/javascript/global.js"></script>
-    <script type="text/javascript" src="resources/javascript/owl-carousel/owl.carousel.min.js"></script>
+    <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/resources/css/googleFonts.css" rel="stylesheet"/>
+    <link href="${pageContext.request.contextPath}/resources/css/stylesheet.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/jstree.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/template_js/template.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/common.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/global.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.min.js"></script>
 </head>
 <body class="index">
-<div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
+<div class="preloader loader" style="display: block;"><img src="${pageContext.request.contextPath}/resources/image/loader-circle.gif" alt="#"/></div>
 <header>
     <div class="header-top">
         <div class="container">
@@ -66,11 +70,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -86,21 +94,28 @@
     <div class="container">
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
-                <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                <div id="logo"><a href="index.jsp"><img src="${pageContext.request.contextPath}/resources/image/logo.jpg" title="E-Commerce"
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -137,6 +152,14 @@
 <%--        <li><a href="cart.html">Shopping Cart</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<%
+    Result result;
+    if(request.getAttribute("result") != null)
+    result = (Result) request.getAttribute("result");
+    else
+    result = new Result();
+
+%>
 <div class="container">
     <div class="row m-t-40">
         <div id="column-left" class="col-sm-3 hidden-xs column-left">
@@ -147,97 +170,147 @@
         <div class="col-sm-9" id="content">
             <div id="accordion" class="panel-group">
                 <div class="panel panel-default">
+                    <%
+                        if(result.hasObject(Order.class.getSimpleName())) {
+                            List<DomainObject> orders = result.getObject(Order.class.getSimpleName());
+                            for(DomainObject d : orders){
+                                Order order = (Order) d;
+                    %>
                     <div class="panel-heading">
                         <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"
-                                                   data-toggle="collapse" href="#collapse-order-1"
-                                                   aria-expanded="false">Pedido #123ABC456 - 15/02/2020 <i
-                                class="fa fa-caret-down"></i></a><span class="label label-primary m-r-20 pull-right">Em Tr&acirc;nsito</span></h4>
+                                                   data-toggle="collapse" href="#collapse-order-<%out.print(order.getId());%>"
+                                                   aria-expanded="false">Pedido #<%out.print(order.getId());%> - <%out.print(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(order.getCreation()));%> <i
+                                class="fa fa-caret-down"></i></a>
+<%
+    String label = "";
+    switch (order.getStatus().getCode()) {
+        case 1:
+            label = "label-success";
+            break;
+        case 2:
+            label = "label-primary";
+            break;
+        case 11:
+            label = "label-warning";
+            break;
+        case 3:
+        case 6:
+            label = "label-info";
+            break;
+        case 5:
+        case 8:
+        case 10:
+            label = "label-danger";
+            break;
+        default:
+            label = "label-default";
+            break;
+    }
+%>
+                            <span class="label <%out.print(label);%> m-r-20 pull-right"><%out.print(order.getStatus().getTitle());%></span>
+                        </h4>
                     </div>
-                    <div id="collapse-order-1" role="heading" class="panel-collapse collapse"
+                    <div id="collapse-order-<%out.print(order.getId());%>" role="heading" class="panel-collapse collapse"
                          aria-expanded="false" style="height: 0px;">
                         <div class="panel-body">
-                            <%for(int i = 0; i < 3; i++){%>
+                            <%if(order.getItems() != null && order.getItems().size() > 0){
+                                for(OrderItem item : order.getItems()){%>
                             <div class="row">
                                 <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
+                                    <a href="${pageContext.request.contextPath}/book/<%out.print(item.getBook().getId());%>"><img class="img-thumbnail" style="max-height: 50px;" title="Produto" alt="Imagem do Produto" src="${pageContext.request.contextPath}/<%out.print(item.getBook().getImages().get(0).getPath());%>"></a>
                                 </div>
                                 <div class="col-sm-5">
-                                    <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>
+                                    <a href="${pageContext.request.contextPath}/book/<%out.print(item.getBook().getId());%>"><%out.print(item.getBook().getTitle());%></a>
                                 </div>
-                                <div class="col-sm-1">Qtde: 1</div>
-                                <div class="col-sm-1"><a>$24.00</a></div>
-                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" href="returnItem.jsp">Cancelar Item</a> </div>
+                                <div class="col-sm-1">Qtde: <%out.print(item.getQuantity());%></div>
+                                <div class="col-sm-1"><a>$<%out.print(String.format("%.2f", item.getBook().getPrice()));%></a></div>
+                                <form method="post" action="book/return">
+                                <%if(item.getStatus().getCode()<4){%>
+                                <div class="col-sm-3 pull-right"><button type="submit" class="btn label pull-right" id="cancelItem<%out.print(item.getId());%>">Cancelar Item</button> </div>
+                                <%} else if(item.getStatus().equals(Status.DELIVERED)){%>
+                                <div class="col-sm-3 pull-right"><button type="submit" class="btn label pull-right" id="returnItem<%out.print(item.getId());%>">Devolver/Trocar</button> </div>
+                                <%} else {%>
+                                    <div class="col-sm-3 pull-right text-right"><p style="color: darkorange;"><strong><%out.print(item.getStatus().getTitle());%></strong></p> </div>
+                                <%}%>
+                                    <input type="hidden" name="orderId" value="<%out.print(order.getId());%>">
+                                    <input type="hidden" name="itemId" value="<%out.print(item.getId());%>">
+                                </form>
                             </div>
-                            <%if(i < 2){%>
                             <hr/>
-                            <%}}%>
+                            <%
+                            }
+                            }%>
                         </div>
                     </div>
+                    <%
+
+                            }
+                        }%>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"
-                                                   data-toggle="collapse" href="#collapse-order-2"
-                                                   aria-expanded="false">Pedido #QWE789EWQ - 17/01/2020 <i
-                                class="fa fa-caret-down"></i></a><span class="label label-success m-r-20 pull-right">Entregue</span></h4>
-                    </div>
-                    <div id="collapse-order-2" role="heading" class="panel-collapse collapse"
-                         aria-expanded="false" style="height: 0px;">
-                        <div class="panel-body">
-                            <%for(int i = 0; i < 3; i++){%>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
-                                </div>
-                                <div class="col-sm-5">
-                                    <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>
-                                </div>
-                                <div class="col-sm-1">Qtde: 1</div>
-                                <div class="col-sm-1"><a>$24.00</a></div>
-                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" href="returnItem.jsp">Devolver/Trocar</a> </div>
-                            </div>
-                            <%if(i < 2){%>
-                            <hr/>
-                            <%}}%>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"
-                                                   data-toggle="collapse" href="#collapse-order-3"
-                                                   aria-expanded="false">Pedido #321CDE654 - 18/12/2019 <i
-                                class="fa fa-caret-down"></i></a><span class="label label-danger m-r-20 pull-right">Troca/Devolu&ccedil;&atilde;o</span></h4>
-                    </div>
-                    <div id="collapse-order-3" role="heading" class="panel-collapse collapse"
-                         aria-expanded="false" style="height: 0px;">
-                        <div class="panel-body">
-                            <%for(int i = 0; i < 3; i++){%>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
-                                </div>
-                                <div class="col-sm-5">
-                                    <p><a href="bookDetail.jsp">T&iacute;tulo do Livro</a></p>
-                                    <p><strong>Motivo da Troca:</strong></p>
-                                    <p>Motivo da Troca Informado na Solicita&ccedil;&atilde;o</p>
-                                </div>
-                                <div class="col-sm-1">Qtde: 1</div>
-                                <div class="col-sm-1"><a>$24.00</a></div>
-                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" disabled="true" >Pendente</a> </div>
-                            </div>
-                            <%if(i < 2){%>
-                            <hr/>
-                            <%}}%>
-                        </div>
-                    </div>
-                </div>
+<%--                <div class="panel panel-default">--%>
+<%--                    <div class="panel-heading">--%>
+<%--                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"--%>
+<%--                                                   data-toggle="collapse" href="#collapse-order-2"--%>
+<%--                                                   aria-expanded="false">Pedido #QWE789EWQ - 17/01/2020 <i--%>
+<%--                                class="fa fa-caret-down"></i></a><span class="label label-success m-r-20 pull-right">Entregue</span></h4>--%>
+<%--                    </div>--%>
+<%--                    <div id="collapse-order-2" role="heading" class="panel-collapse collapse"--%>
+<%--                         aria-expanded="false" style="height: 0px;">--%>
+<%--                        <div class="panel-body">--%>
+<%--                            <%for(int i = 0; i < 3; i++){%>--%>
+<%--                            <div class="row">--%>
+<%--                                <div class="col-sm-2">--%>
+<%--                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>--%>
+<%--                                </div>--%>
+<%--                                <div class="col-sm-5">--%>
+<%--                                    <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>--%>
+<%--                                </div>--%>
+<%--                                <div class="col-sm-1">Qtde: 1</div>--%>
+<%--                                <div class="col-sm-1"><a>$24.00</a></div>--%>
+<%--                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" href="returnItem.jsp">Devolver/Trocar</a> </div>--%>
+<%--                            </div>--%>
+<%--                            <%if(i < 2){%>--%>
+<%--                            <hr/>--%>
+<%--                            <%}}%>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
+<%--                <div class="panel panel-default">--%>
+<%--                    <div class="panel-heading">--%>
+<%--                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"--%>
+<%--                                                   data-toggle="collapse" href="#collapse-order-3"--%>
+<%--                                                   aria-expanded="false">Pedido #321CDE654 - 18/12/2019 <i--%>
+<%--                                class="fa fa-caret-down"></i></a><span class="label label-danger m-r-20 pull-right">Troca/Devolu&ccedil;&atilde;o</span></h4>--%>
+<%--                    </div>--%>
+<%--                    <div id="collapse-order-3" role="heading" class="panel-collapse collapse"--%>
+<%--                         aria-expanded="false" style="height: 0px;">--%>
+<%--                        <div class="panel-body">--%>
+<%--                            <%for(int i = 0; i < 3; i++){%>--%>
+<%--                            <div class="row">--%>
+<%--                                <div class="col-sm-2">--%>
+<%--                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>--%>
+<%--                                </div>--%>
+<%--                                <div class="col-sm-5">--%>
+<%--                                    <p><a href="bookDetail.jsp">T&iacute;tulo do Livro</a></p>--%>
+<%--                                    <p><strong>Motivo da Troca:</strong></p>--%>
+<%--                                    <p>Motivo da Troca Informado na Solicita&ccedil;&atilde;o</p>--%>
+<%--                                </div>--%>
+<%--                                <div class="col-sm-1">Qtde: 1</div>--%>
+<%--                                <div class="col-sm-1"><a>$24.00</a></div>--%>
+<%--                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" disabled="true" >Pendente</a> </div>--%>
+<%--                            </div>--%>
+<%--                            <%if(i < 2){%>--%>
+<%--                            <hr/>--%>
+<%--                            <%}}%>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
             </div>
         </div>
     </div>
 </div>
 <div class="footer-top-cms parallax-container">
-    <div class="parallax"><img src="resources/image/parallax1.jpg" alt="#"></div>
+    <div class="parallax"><img src="${pageContext.request.contextPath}/resources/image/parallax1.jpg" alt="#"></div>
     <div class="container">
         <div class="row">
             <div class="newslatter">
@@ -358,10 +431,10 @@
             <div class="footer-bottom-cms">
                 <div class="footer-payment">
                     <ul>
-                        <li class="mastero"><a href="#"><img alt="" src="resources/image/payment/mastero.jpg"></a></li>
-                        <li class="visa"><a href="#"><img alt="" src="resources/image/payment/visa.jpg"></a></li>
-                        <li class="currus"><a href="#"><img alt="" src="resources/image/payment/currus.jpg"></a></li>
-                        <li class="discover"><a href="#"><img alt="" src="resources/image/payment/discover.jpg"></a>
+                        <li class="mastero"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/mastero.jpg"></a></li>
+                        <li class="visa"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/visa.jpg"></a></li>
+                        <li class="currus"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/currus.jpg"></a></li>
+                        <li class="discover"><a href="#"><img alt="" src="${pageContext.request.contextPath}/resources/image/payment/discover.jpg"></a>
                         </li>
                     </ul>
                 </div>
@@ -371,7 +444,7 @@
     <a id="scrollup">Scroll</a>
 </footer>
 
-<script src="resources/javascript/jquery.parallax.js"></script>
+<script src="${pageContext.request.contextPath}/resources/javascript/jquery.parallax.js"></script>
 <script>
     jQuery(document).ready(function ($) {
         $('.parallax').parallax();

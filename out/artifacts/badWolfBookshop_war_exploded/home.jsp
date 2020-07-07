@@ -1,4 +1,7 @@
-<%@ page import="domain.DomainObject" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
+<%@ page import="domain.*" %>
+<%@ page import="dto.CartDTO" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,27 +11,36 @@
     <meta name="description" content="e-commerce site well design with responsive view."/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <%--    <link href="resources/image/favicon.png" rel="icon" type="image/png" >--%>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
-    <link href="resources/css/googleFonts.css" rel="stylesheet"/>
-    <link href="resources/css/stylesheet.css" rel="stylesheet">
-    <link href="resources/css/responsive.css" rel="stylesheet">
-    <link href="resources/javascript/owl-carousel/owl.carousel.css" type="text/css" rel="stylesheet" media="screen"/>
-    <link href="resources/javascript/owl-carousel/owl.transitions.css" type="text/css" rel="stylesheet" media="screen"/>
-    <script type="text/javascript" src="resources/javascript/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/jstree.min.js"></script>
-    <script type="text/javascript" src="resources/javascript/template_js/template.js"></script>
-    <script type="text/javascript" src="resources/javascript/common.js"></script>
-    <script type="text/javascript" src="resources/javascript/global.js"></script>
-    <script type="text/javascript" src="resources/javascript/owl-carousel/owl.carousel.min.js"></script>
+    <link href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/font-awesome/css/font-awesome.css"
+          rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/resources/css/googleFonts.css" rel="stylesheet"/>
+    <link href="${pageContext.request.contextPath}/resources/css/stylesheet.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.css" type="text/css"
+          rel="stylesheet" media="screen"/>
+    <link href="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.transitions.css"
+          type="text/css" rel="stylesheet" media="screen"/>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/resources/javascript/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/resources/javascript/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/resources/javascript/template_js/jstree.min.js"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/resources/javascript/template_js/template.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/common.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/global.js"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/resources/javascript/owl-carousel/owl.carousel.min.js"></script>
 </head>
 <body class="index">
-<div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
+<div class="preloader loader" style="display: block;"><img
+        src="${pageContext.request.contextPath}/resources/image/loader-circle.gif" alt="#"/></div>
+<%
+    DomainObject o = new DomainObject();
+%>
 <header>
-    <%
-        DomainObject o = new DomainObject();
-    %>
     <div class="header-top">
         <div class="container">
             <div class="row">
@@ -70,11 +82,17 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
-                                        <li><a href="registration.jsp">Cadastrar</a></li>
+                                        <%if (request.getSession().getAttribute("user") == null) {%>
+                                        <li><a href="${pageContext.request.contextPath}/signup">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
-                                        <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de
+                                            Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a>
+                                        </li>
+                                        <li><a href="${pageContext.request.contextPath}/profile">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -90,21 +108,31 @@
     <div class="container">
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
-                <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                <div id="logo"><a href="index.jsp"><img
+                        src="${pageContext.request.contextPath}/resources/image/logo.jpg" title="E-Commerce"
+                        alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
           <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+
+                        <div id="cartItems"><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if (cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></div></span></a>
                 </div>
             </div>
         </div>
@@ -137,38 +165,69 @@
     <div id="main-banner" class="owl-carousel home-slider" style="height: 300px">
         <%--        <div class="item"><a class="text-center" href="#"><img src="resources/image/banners/Main-Banner1.jpg" alt="main-banner1"--%>
         <%--                                           class="img-responsive"/></a></div>--%>
-        <div class="item"><a href="#"><img src="resources/image/banners/BANNER_FB-1900x600.jpg" alt="main-banner2"
-                                           class="img-responsive"/></a></div>
-        <div class="item"><a href="#"><img src="resources/image/banners/vem_pra_livraria-1900x600.jpg"
-                                           alt="main-banner3" class="img-responsive"/></a></div>
+        <div class="item"><a href="#"><img
+                src="${pageContext.request.contextPath}/resources/image/banners/BANNER_FB-1900x600.jpg"
+                alt="main-banner2"
+                class="img-responsive"/></a></div>
+        <div class="item"><a href="#"><img
+                src="${pageContext.request.contextPath}/resources/image/banners/vem_pra_livraria-1900x600.jpg"
+                alt="main-banner3" class="img-responsive"/></a></div>
     </div>
 </div>
 <div class="container m-t-40" style="height:10px;"></div>
+<%
+    Result result;
+    if (request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+%>
 <div class="container">
     <div class="cms_banner">
         <h3 class="productblock-title">Destaques</h3>
         <div class="row m-t-40">
-            <%for (int i = 0; i < 12; i++) {%>
+            <%
+                if (result.getObject(Book.class.getSimpleName()) != null) {
+                    int i = 0;
+                    for (DomainObject d : result.getObject(Book.class.getSimpleName())) {
+                        if (i < 8){
+                        Book b = (Book) d;
+            %>
             <div class="product-layout  product-grid  col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <div class="item">
                     <div class="product-thumb">
-                        <div class="image product-imageblock"><a href="bookDetail.jsp"> <img
-                                src="resources/image/book-front-400x600.jpg" alt="Imagem do Livro"
-                                title="T&iacute;tulo do Livro" class="img-responsive"/> <img
-                                src="resources/image/book-front-400x600.jpg" alt="Capa do Livro"
-                                title="T&iacute;tulo do Livro" class="img-responsive"/> </a>
-                            <ul class="button-group">
-                                <li>
-                                    <button type="button" class="wishlist" data-toggle="tooltip" data-placement="top"
-                                            title="Acrescentar &agrave; Lista de Desejos"><i class="fa fa-heart-o"></i>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" class="addtocart-btn" title="Colocar no Carrinho"> Colocar no
-                                        Carrinho
-                                    </button>
-                                </li>
-                            </ul>
+                        <div class="image product-imageblock m-l-40 p-l-40">
+                            <a href="${pageContext.request.contextPath}/book/<%out.print(b.getId());%>">
+                                <img
+                                        src="<%out.print(b.getImages().get(0).getPath());%>" alt="Imagem do Livro"
+                                        title="<%out.print(b.getTitle());%>>" class="img-responsive"/>
+                                <img
+                                        src="<%out.print(b.getImages().get(0).getPath());%>" alt="Imagem do Livro"
+                                        title="<%out.print(b.getTitle());%>>" class="img-responsive"/>
+                            </a>
+                            <div class="button-group">
+                                <form action="book/addToCart" method="POST">
+                                    <div class="row">
+                                        <button type="button" class="wishlist" data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Acrescentar &agrave; Lista de Desejos"><i
+                                                class="fa fa-heart-o"></i>
+                                        </button>
+                                        <%--                                </li>--%>
+                                        <%--                                <li>--%>
+                                        <button type="submit" class="addtocart-btn" data-toggle="tooltip"
+                                                name="operation" value="addToCart"
+                                                data-placement="top" title="Colocar no Carrinho"
+                                                onclick="addToCart(<%%>)"><i
+                                                class="fa fa-shopping-cart"></i></button>
+                                        <input type="hidden" name="bookId" value="<%out.print(b.getId());%>"/>
+                                        <input type="hidden" name="price" value="<%out.print(b.getPrice());%>"/>
+                                        <input type="hidden" name="cover"
+                                               value="<%out.print(b.getImages().size() > 0 ? b.getImages().get(0).getPath() : "");%>"/>
+                                        <input type="hidden" name="title" value="<%out.print(b.getTitle());%>"/>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                         <div class="caption product-detail">
                             <div class="rating">
@@ -186,15 +245,22 @@
                                 <span class="fa fa-stack"><i
                                         class="fa fa-thumbs-o-up fa-stack-2x"></i></span>
                             </div>
-                            <h4 class="product-name"><a href="bookDetail.jsp" title="T&iacute;tulo do Livro">T&iacute;tulo do
-                                Livro</a></h4>
-                            <p><strong>Autor do Livro</strong></p>
-                            <p class="price product-price">$22.00</p>
+                            <h4 class="product-name"><a href="/book/<%out.print(b.getId());%>"
+                                                        title="<%out.print(b.getTitle());%>"><%
+                                out.print(b.getTitle());%></a></h4>
                         </div>
                     </div>
                 </div>
             </div>
-            <%}%>
+            <%
+                    }
+                        if(i == 3)
+                            out.print("</div><div class=\"row\">");
+                        i++;
+
+                    }
+                }
+            %>
         </div>
     </div>
 </div>
@@ -205,7 +271,8 @@
             <div class="newslatter">
                 <form>
                     <h5>FIQUE POR DENTRO!</h5>
-                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos diretamente
+                    <h4 class="title-subline text-white">Receba todas as novidades, promo&ccedil;&otilde;es, e eventos
+                        diretamente
                         na sua caixa de entrada!</h4>
                     <div class="input-group">
                         <label hidden for="emailSubscription">Assinatura de newsletter por e-mail</label>

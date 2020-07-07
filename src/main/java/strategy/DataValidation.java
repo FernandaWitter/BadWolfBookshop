@@ -9,30 +9,25 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class DataValidation implements IStrategy {
-    HashMap<String, ArrayList<String>> fields;
 
-    public DataValidation(){
-//        fields = new HashMap<>();
-//        fields.put(Book.class.getSimpleName(), new ArrayList<>(Arrays.asList("bookTitle","cpf","dt_cadastro",
-//                "cargo", "setor", "regional","email", "cadastrante")));
-    }
+    public DataValidation() {}
 
     @Override
     public void process(DomainObject object, Result result) {
-        Book book = (Book)object;
+        Book book = (Book) object;
         boolean flag = true;
 
-        if(book.getTitle() == null || book.getTitle().equals(""))
+        if (book.getTitle() == null || book.getTitle().equals(""))
             flag = false;
-        else if(book.getPubYear() == null)
+        else if (book.getPubYear() == null)
             flag = false;
-        else if(book.getPubEdition() == null)
+        else if (book.getPubEdition() == null)
             flag = false;
-        else if(book.getLanguage() == null || book.getLanguage().equals(""))
+        else if (book.getLanguage() == null || book.getLanguage().equals(""))
             flag = false;
-        else if(book.getIsbn() == null || book.getIsbn().equals(""))
+        else if (book.getIsbn() == null || book.getIsbn().equals(""))
             flag = false;
-        else if(book.getSummary() == null || book.getSummary().equals(""))
+        else if (book.getSummary() == null || book.getSummary().equals(""))
             flag = false;
         else if (book.getHeight() == null)
             flag = false;
@@ -49,8 +44,7 @@ public class DataValidation implements IStrategy {
         else if (book.getPages() == null)
             flag = false;
 
-
-        if(!flag)
+        if (!flag)
             result.setMsg("error", "Erro de Valida&ccedil;&atilde;o de Dados.<br/> Existem campos obrigat&oacute;rios n&atildeo preenchidos.");
     }
 }

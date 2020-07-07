@@ -3315,3 +3315,7 @@ div.dioprogress_size_l {
     font-size: 28px;
     font-weight: bold;
 }
+
+#book-thumb{
+	max-height: 50px !important;
+}

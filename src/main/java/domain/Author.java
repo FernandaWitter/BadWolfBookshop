@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 
 @NoArgsConstructor
-public class Author extends DomainObject{
+public class Author extends DomainObject {
     private String name;
 
-    public Author(String name){
+    public Author(String name) {
         this.name = name;
     }
 }

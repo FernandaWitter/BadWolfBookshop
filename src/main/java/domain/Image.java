@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 
 @NoArgsConstructor
-public class Image extends DomainObject{
+public class Image extends DomainObject {
     private String path;
     private int book;
 
-    public Image (String path){
+    public Image(String path) {
         this.path = path;
     }
 }

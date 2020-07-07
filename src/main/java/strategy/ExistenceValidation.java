@@ -23,7 +23,7 @@ public class ExistenceValidation implements IStrategy {
         IDAO dao = daoMap.get(object.getClass().getSimpleName());
         dao.findActive(object, result);
         List<DomainObject> search = result.getObject(object.getClass().getSimpleName());
-        if(null != search && search.size() != 0)
+        if (null != search && search.size() != 0)
             result.setMsg("error", "O item cadastrado j&aacute; existe!");
     }
 }

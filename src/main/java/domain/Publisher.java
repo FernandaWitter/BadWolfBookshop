@@ -1,6 +1,5 @@
 package domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,14 +8,14 @@ import lombok.Setter;
 @Setter
 
 @NoArgsConstructor
-public class Publisher extends DomainObject{
+public class Publisher extends DomainObject {
     private String name;
 
-    public Publisher(int id){
+    public Publisher(int id) {
         super(id);
     }
 
-    public Publisher(String name){
+    public Publisher(String name) {
         this.name = name;
     }
 }

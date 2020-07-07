@@ -1,3 +1,4 @@
+<%@ page import="dto.CartDTO" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,11 +67,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
-                                        <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
+                                        <li><a href="${pageContext.request.contextPath}/profile">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -87,20 +92,27 @@
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
                 <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -145,10 +157,10 @@
                 <div class="columnblock-title">Dados do Usu&aacute;rio</div>
                 <div class="category_block">
                     <ul class="box-category">
-                        <li><a href="editClientPersonalData.jsp">Dados Pessoais</a></li>
-                        <li><a href="editClientAddressData.jsp">Endere&ccedil;os</a></li>
-                        <li><a href="editClientBillingData.jsp">Formas de Pagamento</a></li>
-                        <li><a href="#">Alterar Senha</a></li>
+                        <li><a href="${pageContext.request.contextPath}/profile">Dados Pessoais</a></li>
+                        <li><a href="${pageContext.request.contextPath}/address">Endere&ccedil;os</a></li>
+                        <li><a href="${pageContext.request.contextPath}/cards">Formas de Pagamento</a></li>
+                        <li><a href="${pageContext.request.contextPath}/credentials">Alterar Senha</a></li>
                         <li><a href="removeAccount.jsp">Excluir Conta</a></li>
                     </ul>
                 </div>
@@ -156,7 +168,7 @@
         </div>
         <div class="container" style="height:40px;"></div>
         <div class="center-block m-l-40 m-r-40" id="content">
-            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="registration.jsp">
+            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="${pageContext.request.contextPath}/alterPW">
                 <p>* Campos obrigat&oacute;rios</p>
                 <fieldset>
                     <legend>Altera&ccedil;&atilde;o de Senha</legend>
@@ -182,8 +194,7 @@
                         <div class="col-md-3"></div>
                     <div class="pull-left"><a href="index.jsp" class="btn btn-default">Cancelar</a></div>
                     <div class="pull-right m-r-10">
-                        <%--                        <input type="submit" value="Continuar" class="btn btn-primary" />--%>
-                        <a href="#" class="btn btn-primary">Continuar</a>
+                        <button type="submit" class="btn btn-primary">Continuar</button>
                     </div>
                     </div>
                 </div>

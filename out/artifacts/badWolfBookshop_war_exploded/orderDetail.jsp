@@ -1,7 +1,11 @@
+<%@ page import="com.sun.org.apache.xpath.internal.operations.Or" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="domain.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>YourTurn</title>
+    <title>Bad Wolf Bookshop</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="e-commerce site well design with responsive view."/>
@@ -60,7 +64,7 @@
 
         <div class="navbar-collapse">
             <ul class="main-navigation">
-                <li><a href="admin-dash.html" class="active parent">Dashboard</a>
+                <li><a href="${pageContext.request.contextPath}/dash" class="active parent">Dashboard</a>
                 </li>
                 <li><a href="#" class="active parent">Produtos</a>
                     <ul>
@@ -70,9 +74,10 @@
                 </li>
                 <li><a href="#" class="active parent">Pedidos</a>
                     <ul>
-                        <li><a href="orderList.jsp">Listagem de Pedidos</a></li>
-                        <li><a href="orderList.jsp">Pedidos em Aberto</a></li>
-                        <li><a href="orderList.jsp">Pedidos de Troca e Devolu&ccedil;&atilde;o</a></li>
+                        <li><a href="${pageContext.request.contextPath}/orderList">Listagem de Pedidos</a></li>
+                        <li><a href="${pageContext.request.contextPath}/orderList">Pedidos em Aberto</a></li>
+                        <li><a href="${pageContext.request.contextPath}/orderList">Pedidos de Troca e Devolu&ccedil;&atilde;o</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -89,94 +94,160 @@
 <%--        <li><a href="register.html">Register</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<%
+    if (request.getSession().getAttribute("error") != null) {
+        out.print("<div class=\"row m-t-40 text-center\">");
+        out.print("<p style=\"color:red; font-weight: bold;\"><strong>");
+        out.print(request.getSession().getAttribute("error") + "<br/>");
+        out.print("</strong></p><br/>");
+        out.print("</div>");
+        request.getSession().removeAttribute("error");
+    }
+    Result result;
+    if (request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+
+%>
 <div class="container">
     <div class="row m-t-40">
         <div id="column-left" class="col-sm-3 hidden-xs column-left">
             <div class="Categories left-sidebar-widget" style="position: absolute">
-                <div class="columnblock-title">Pedido <strong>#123ABC456</strong></div>
-                <p><strong>Cliente:</strong> Cliente Principal</p>
-                <p><strong>Data do Pedido:</strong> 15/02/2020</p>
-                <p><strong>Valor:</strong> $254.00</p>
+                <%
+                    if (result.hasObject(Order.class.getSimpleName())) {
+                        Order order = (Order) result.getObject(Order.class.getSimpleName()).get(0);
+                        out.print("<div class=\"columnblock-title\">Pedido <strong>#" + order.getId() + "</strong></div>");
+                        out.print("<p><strong>Cliente: </strong>" + order.getUser().getName() + "</p>");
+                        out.print("<p><strong>Data do Pedido: </strong>" + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(order.getCreation()) + "</p>");
+                        out.print("<p><strong>Valor:</strong> $" + String.format("%.2f", order.getOrderTotal()) + "</p>");
+                %>
             </div>
         </div>
         <div class="col-sm-9" id="content">
+            <p>Clique nos bot&otilde;es de cada item para atualizar seu status. Para salvar as modifica&ccedil;&otilde;es, clique em "Salvar"
+                ao final da listagem.</p>
             <div id="accordion" class="panel-group">
                 <div class="panel panel-default">
+                    <%
+                        if (order.getItems() != null && order.getItems().size() > 0) {
+                            for (OrderItem item : order.getItems()) {
+                    %>
                     <div class="panel-heading">
-                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"
-                                                   data-toggle="collapse" href="#collapse-order-1"
-                                                   aria-expanded="false"><strong>Item:</strong> Produto 1 <i
-                                class="fa fa-caret-down"></i></a><span class="label label-primary m-r-20 pull-right">Em Tr&acirc;nsito</span></h4>
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle collapsed" data-parent="#accordion"
+                               data-toggle="collapse" href="#collapse-order-<%out.print(item.getId());%>"
+                               aria-expanded="false">
+                                <strong>Item: </strong><%out.print(item.getBook().getTitle());%>
+                                <i class="fa fa-caret-down"></i>
+                            </a>
+                            <%
+                                String label = "";
+                                switch (item.getStatus().getCode()) {
+                                    case 1:
+                                        label = "label-success";
+                                        break;
+                                    case 2:
+                                        label = "label-primary";
+                                        break;
+                                    case 11:
+                                        label = "label-warning";
+                                        break;
+                                    case 3:
+                                    case 6:
+                                        label = "label-info";
+                                        break;
+                                    case 5:
+                                    case 8:
+                                    case 10:
+                                        label = "label-danger";
+                                        break;
+                                    default:
+                                        label = "label-default";
+                                        break;
+                                }
+                            %>
+                            <span class="label <%out.print(label);%> m-r-20 pull-right"><%
+                                out.print(item.getStatus().getTitle());%></span>
+                        </h4>
                     </div>
-                    <div id="collapse-order-1" role="heading" class="panel-collapse collapse"
+                    <div id="collapse-order-<%out.print(item.getId());%>" role="heading" class="panel-collapse collapse"
                          aria-expanded="false" style="height: 0px;">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
+                                    <%--                                    <a href="${pageContext.request.contextPath}/books/">--%>
+                                    <img class="img-thumbnail" title="Produto" alt="Imagem do Produto"
+                                         style="max-height: 50px;"
+                                         src="<%out.print(item.getBook().getImages().get(0).getPath());%>">
+                                    <%--                                        </a>--%>
                                 </div>
                                 <div class="col-sm-5">
-                                    <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>
+                                    <%--                                    <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>--%>
+                                    <p><%out.print(item.getBook().getTitle());%></p>
+                                    <%
+                                        Status newStatus = Status.getNext(item.getStatus());
+                                        if (!newStatus.getTitle().equals(item.getStatus().getTitle())) {
+                                            if (newStatus.equals(Status.EXCHANGING)) {
+                                                out.print("<p><strong>Motivo da Troca:</strong></p>");
+                                                out.print("<p>" + item.getReturnReason() + "</p>");
+                                            } else if (newStatus.equals(Status.RETURNING)) {
+                                                out.print("<p><strong>Motivo da Devolução:</strong></p>");
+                                                out.print("<p>" + item.getReturnReason() + "</p>");
+                                            }
+                                        }
+                                    %>
                                 </div>
-                                <div class="col-sm-1">Qtde: 1</div>
-                                <div class="col-sm-1"><a>$24.00</a></div>
-                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" href="orderDetail.jsp">Entregue</a> </div>
+                                <div class="col-sm-1">Qtde: <%out.print(item.getQuantity());%></div>
+                                <div class="col-sm-1"><a>$<%
+                                    out.print(String.format("%.2f", item.getBook().getPrice()));%></a></div>
+                                <%
+                                            if (!newStatus.getTitle().equals(item.getStatus().getTitle())) {
+                                                if (newStatus.equals(Status.EXCHANGE_AUTHORIZED) || newStatus.equals(Status.RETURN_AUTHORIZED) || newStatus.equals(Status.CANCELLED)) {
+                                                    out.print("<div class=\"col-sm-3 pull-right\"><button type=\"button\" class=\"btn btn-primary label pull-right\" id=\"accept" + item.getId() + "\" onclick=\"acceptRequest(" + item.getId() + ")\">Aceitar</button> </div>");
+                                                    out.print("<div class=\"col-sm-offset-8\"><button type=\"button\" class=\"btn btn-primary label pull-right m-t-10 m-r-10\" id=\"reject" + item.getId() + "\" onclick=\"rejectItem(" + item.getId() + ")\">Rejeitar</button></div>");
+                                                } else if (item.getQuantity() <= item.getBook().getInStock())
+                                                    out.print("<div class=\"col-sm-3 pull-right\"><button type=\"button\" class=\"btn btn-primary label pull-right\" id=\"update" + item.getId() + "\" onclick=\"updateItem(" + item.getId() + ")\">" + newStatus.getTitle() + "</button></div>");
+                                                } else {
+                                                out.print("<div class=\"col-sm-3 pull-right\"><div type=\"button\" class=\"btn btn-warning label pull-right\"> Estoque insuficiente! </button></div>");
+                                                }
+                                            }
+                                %>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"
-                                                   data-toggle="collapse" href="#collapse-order-2"
-                                                   aria-expanded="false"><strong>Item:</strong> Produto 2 <i
-                                class="fa fa-caret-down"></i></a><span class="label label-success m-r-20 pull-right">Entregue</span></h4>
-                    </div>
-                    <div id="collapse-order-2" role="heading" class="panel-collapse collapse"
-                         aria-expanded="false" style="height: 0px;">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
-                                </div>
-                                <div class="col-sm-5">
-                                    <a href="bookDetail.jsp">T&iacute;tulo do Livro</a>
-                                </div>
-                                <div class="col-sm-1">Qtde: 1</div>
-                                <div class="col-sm-1"><a>$24.00</a></div>
-<%--                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" href="returnItem.jsp">Devolver/Trocar</a> </div>--%>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title"><a class="accordion-toggle collapsed" data-parent="#accordion"
-                                                   data-toggle="collapse" href="#collapse-order-3"
-                                                   aria-expanded="false"><strong>Item:</strong> Produto 3 <i
-                                class="fa fa-caret-down"></i></a><span class="label label-danger m-r-20 pull-right">Troca/Devolu&ccedil;&atilde;o</span></h4>
-                    </div>
-                    <div id="collapse-order-3" role="heading" class="panel-collapse collapse"
-                         aria-expanded="false" style="height: 0px;">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto" alt="Imagem do Produto" src="resources/image/book-front-50x64.jpg"></a>
-                                </div>
-                                <div class="col-sm-5">
-                                    <p><a href="bookDetail.jsp">T&iacute;tulo do Livro</a></p>
-                                    <p><strong>Motivo da Troca:</strong></p>
-                                    <p>Motivo da Troca Informado na Solicita&ccedil;&atilde;o</p>
-                                </div>
-                                <div class="col-sm-1">Qtde: 1</div>
-                                <div class="col-sm-1"><a>$24.00</a></div>
-                                <div class="col-sm-3 pull-right"><a class="btn label pull-right" href="orderDetail.jsp">Aceitar</a> </div>
-                                <div class="col-sm-offset-8"><a class="btn label pull-right m-t-10 m-r-10" href="orderDetail.jsp">Rejeitar</a></div>
-                            </div>
-                        </div>
-                    </div>
+                    <%}}%>
+                    <script>
+                        function updateItem(id) {
+                            document.getElementById('updatedItemsList').innerHTML = document.getElementById('updatedItemsList').innerHTML + '<input type="hidden" name="updatedItems[]" value="' + id + '"/>';
+                            document.getElementById('update' + id).disabled = true;
+                        }
+
+                        function rejectItem(id) {
+                            document.getElementById('rejectedItemsList').innerHTML = document.getElementById('rejectedItemsList').innerHTML + '<input type="hidden" name="rejectedItems[]" value="' + id + '"/>';
+                            document.getElementById('accept' + id).disabled = true;
+                            document.getElementById('reject' + id).disabled = true;
+                        }
+
+                        function acceptRequest(id) {
+                            document.getElementById('updatedItemsList').innerHTML = document.getElementById('updatedItemsList').innerHTML + '<input type="hidden" name="updatedItems[]" value="' + id + '"/>';
+                            document.getElementById('accept' + id).disabled = true;
+                            document.getElementById('reject' + id).disabled = true;
+                        }
+                    </script>
                 </div>
             </div>
+            <form action="updateOrder" method="post">
+                <div id="updatedItemsList"></div>
+                <div id="rejectedItemsList"></div>
+                <%
+                        out.print("<input type=\"hidden\" name=\"orderId\" value=\"" + order.getId() + "\"/>");
+                    }
+                %>
+                <div class="col-sm-offset-8">
+                    <button type="submit" class="btn label pull-right m-t-10 m-r-10">Salvar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

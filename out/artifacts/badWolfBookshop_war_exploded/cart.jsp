@@ -1,3 +1,5 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="dto.CartItemDTO" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,11 +68,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
                                         <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -87,20 +93,29 @@
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
                 <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null){
+                                out.print("0 item(s) - $0.00");
+                                cart = new CartDTO();
+                            }
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -145,7 +160,7 @@
             </div>
         </div>
         <div class="col-sm-9" id="content">
-            <form enctype="multipart/form-data" method="post" action="#">
+<%--            <form enctype="multipart/form-data" method="post" action="#">--%>
                 <div class="table-responsive">
                     <table class="table table-bordered" >
                         <thead>
@@ -158,31 +173,43 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <%for (int i = 0; i < 5; i++) {%>
+                        <%  for (CartItemDTO item : cart.getCartItems()) {%>
+
                         <tr>
-                            <td class="text-center"><a href="bookDetail.jsp"><img class="img-thumbnail" title="Produto"
+                            <td class="text-center"><a href="${pageContext.request.contextPath}/book/<%out.print(item.getBookId());%>"><img class="img-thumbnail" title="Produto"
                                                                                   alt="Imagem do Produto"
-                                                                                  src="resources/image/book-front-50x64.jpg"></a>
+                                                                                  src="<%out.print(item.getCover());%>"
+                            style="max-height: 50px"></a>
                             </td>
-                            <td class="text-left"><a href="bookDetail.jsp">Livro</a></td>
+                            <td class="text-left"><a href="${pageContext.request.contextPath}/book/<%out.print(item.getBookId());%>">
+                                <%out.print(item.getTitle());%>
+                            </a></td>
                             <td class="text-left">
+                                <form method="post">
                                 <div style="max-width: 200px;" class="input-group btn-block">
-                                    <input type="text" class="form-control quantity" size="1" value="1" name="quantity">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                    <input type="number" class="form-control quantity"  value="<%out.print(item.getQuantity());%>" name="quantity">
+                                        </div>
                                     <span class="input-group-btn">
-                    <button class="btn btn-primary" title="" data-toggle="tooltip" type="submit"
-                            data-original-title="Update"><i class="fa fa-refresh"></i></button>
-                    <button class="btn btn-danger" title="" data-toggle="tooltip" type="button"
-                            data-original-title="Remove"><i class="fa fa-times-circle"></i></button>
-                    </span></div>
+                                        <button class="btn btn-primary" title="" data-toggle="tooltip" type="submit" data-original-title="Update" formaction="${pageContext.request.contextPath}/book/updateQty"><i class="fa fa-refresh"></i></button>
+                                        <button class="btn btn-danger" title="" data-toggle="tooltip" type="submit" data-original-title="Remove" formaction="${pageContext.request.contextPath}/book/remove"><i class="fa fa-times-circle"></i></button>
+                                    </span>
+                                    </div>
+                                    <input type="hidden" name="bookId" value="<%out.print(item.getBookId());%>">
+
+                                </div>
+                                </form>
                             </td>
-                            <td class="text-right">$54.00</td>
-                            <td class="text-right">$54.00</td>
+                            <td class="text-right">$<%out.print(String.format("%.2f", item.getPrice()));%></td>
+                            <td class="text-right">$<%out.print(String.format("%.2f", item.getTotal()));%></td>
                         </tr>
+
                         <%}%>
                         </tbody>
                     </table>
                 </div>
-            </form>
+<%--            </form>--%>
             <br>
             <div class="row">
                 <div class="col-sm-4 col-sm-offset-8">
@@ -190,15 +217,15 @@
                         <tbody>
                         <tr>
                             <td class="text-right"><strong>Sub-Total:</strong></td>
-                            <td class="text-right">$270.00</td>
+                            <td class="text-right">$<%out.print(String.format("%.2f", cart.getTotal()));%></td>
                         </tr>
                         <tr>
                             <td class="text-right"><strong>Impostos (20%):</strong></td>
-                            <td class="text-right">$54.00</td>
+                            <td class="text-right">$<%out.print(String.format("%.2f", cart.getTotal()*0.2));%></td>
                         </tr>
                         <tr>
                             <td class="text-right"><strong>Total:</strong></td>
-                            <td class="text-right">$324.00</td>
+                            <td class="text-right">$<%out.print(String.format("%.2f", cart.getTotal()*1.2));%></td>
                         </tr>
                         </tbody>
                     </table>
@@ -206,7 +233,7 @@
             </div>
             <div class="buttons">
                 <div class="pull-left"><a class="btn btn-default" href="index.jsp">Continuar Comprando</a></div>
-                <div class="pull-right"><a class="btn btn-primary" href="checkout.jsp">Finalizar Compra</a></div>
+                <div class="pull-right"><a class="btn btn-primary" href="${pageContext.request.contextPath}/book/conclude"<%if(cart == null || cart.getNumberOfItems() < 1) out.print("disabled");%>>Finalizar Compra</a></div>
             </div>
         </div>
     </div>

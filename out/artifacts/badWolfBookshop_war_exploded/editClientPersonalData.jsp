@@ -1,3 +1,6 @@
+<%@ page import="dto.CartDTO" %>
+<%@ page import="domain.Result" %>
+<%@ page import="domain.User" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,11 +69,15 @@
                                                                                   aria-hidden="true"></i><span>Perfil</span>
                                     <span class="caret"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <%if(request.getSession().getAttribute("user") == null){%>
                                         <li><a href="registration.jsp">Cadastrar</a></li>
                                         <li><a href="login.jsp">Entrar</a></li>
-                                        <li><a href="orderHistory.jsp">Hist&oacute;rico de Compras</a></li>
-                                        <li><a href="vouchers.jsp">Cupons Dispon&iacute;veis</a> </li>
-                                        <li><a href="editClientPersonalData.jsp">Configura&ccedil;&otilde;es</a></li>
+                                        <%} else {%>
+                                        <li><a href="${pageContext.request.contextPath}/history">Hist&oacute;rico de Compras</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/vouchers">Cupons Dispon&iacute;veis</a> </li>
+                                        <li><a href="${pageContext.request.contextPath}/profile">Configura&ccedil;&otilde;es</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Sair</a></li>
+                                        <%}%>
                                     </ul>
                                 </li>
                                 <li><a href="#" id="wishlist-total" title="Lista de Desejos (0)"><i class="fa fa-heart"
@@ -87,20 +94,27 @@
         <div class="header-inner">
             <div class="col-sm-3 col-xs-3 header-left">
                 <div id="logo"><a href="index.jsp"><img src="resources/image/logo.jpg" title="E-Commerce"
-                                                        alt="E-Commerce" class="img-responsive"/></a></div>
+                                                       alt="E-Commerce" class="img-responsive"/></a></div>
             </div>
             <div class="col-sm-9 col-xs-9 header-right">
                 <div id="search" class="input-group">
-                    <label hidden for="searchbox">Caixa de busca</label>
-                    <input type="text" name="search" id="searchbox" value="" class="form-control input-lg"/>
-                    <span class="input-group-btn">
-          <button type="button" class="btn btn-default btn-lg"><a href="bookSearch.jsp"><span>Buscar</span></a></button>
-          </span></div>
+                    <form action="search" method="get">
+                        <input type="text" name="q" id="q" class="form-control input-lg" aria-label="Caixa de busca"/>
+                        <span class="input-group-btn">
+                          <button type="submit" class="btn btn-default btn-lg"><span>Buscar</span></button>
+                        </span>
+                    </form>
+                </div>
                 <div id="cart" class="btn-group btn-block">
                     <a type="button" class="btn btn-inverse btn-block btn-lg cart-dropdown-button" href="cart.jsp"><span
                             id="cart-total"><i class="fa fa-shopping-cart" style="color: #189b79;"></i>
-          <span>Carrinho</span><br>
-          0 item(s) - $0.00</span></a>
+          <span>Carrinho</span><br><%
+                            CartDTO cart = (CartDTO) request.getSession().getAttribute("cart");
+                            if(cart == null)
+                                out.print("0 item(s) - $0.00");
+                            else
+                                out.print(cart.getNumberOfItems() + " item(s) - $" + String.format("%.2f", cart.getTotal()));
+                        %></span></a>
                 </div>
             </div>
         </div>
@@ -138,6 +152,16 @@
 <%--        <li><a href="register.html">Register</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+<%
+    Result result;
+    User user = new User();
+    if(request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+    if(result.hasObject(User.class.getSimpleName()))
+        user = (User) result.getObject(User.class.getSimpleName()).get(0);
+%>
 <div class="container">
     <div class="row">
         <div class="col-sm-3 hidden-xs column-left m-t-30" id="column-left">
@@ -145,10 +169,10 @@
                 <div class="columnblock-title">Dados do Usu&aacute;rio</div>
                 <div class="category_block">
                     <ul class="box-category">
-                        <li><a href="#">Dados Pessoais</a></li>
-                        <li><a href="editClientAddressData.jsp">Endere&ccedil;os</a></li>
-                        <li><a href="editClientBillingData.jsp">Formas de Pagamento</a></li>
-                        <li><a href="alterPassword.jsp">Alterar Senha</a></li>
+                        <li><a href="${pageContext.request.contextPath}/profile">Dados Pessoais</a></li>
+                        <li><a href="${pageContext.request.contextPath}/address">Endere&ccedil;os</a></li>
+                        <li><a href="${pageContext.request.contextPath}/cards">Formas de Pagamento</a></li>
+                        <li><a href="${pageContext.request.contextPath}/credentials">Alterar Senha</a></li>
                         <li><a href="removeAccount.jsp">Excluir Conta</a></li>
                     </ul>
                 </div>
@@ -157,7 +181,7 @@
         <div class="container" style="height:40px;"></div>
         <div class="center-block m-l-40 m-r-40" id="content">
             <h2 class="text-center">Edi&ccedil;&atilde;o de Dados</h2>
-            <form class="form-horizontal" enctype="multipart/form-data" method="post" action="#">
+            <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/alterProfile">
                 <p>* Campos obrigat&oacute;rios</p>
                 <fieldset id="account">
                     <legend>Seus Dados Pessoais</legend>
@@ -165,49 +189,51 @@
                         <label for="input-nickname" class="col-sm-2 control-label">Apelido</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="input-nickname"
-                                   placeholder="Como prefere ser chamadx?" value="Rose" name="firstname">
+                                   placeholder="Como prefere ser chamadx?" name="nickname"
+                                   value="<%out.print(user.getNickname() != null ? user.getNickname() : "");%>">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="input-name" class="col-sm-2 control-label">Nome Completo*</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="input-name"
-                                   placeholder="Para os livros que enviarmos" value="Rose Tyler" name="lastname">
+                                   placeholder="Para os livros que enviarmos" name="fullname"
+                                   value="<%out.print(user.getName() != null ? user.getName() : "");%>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="input-federal-id" class="col-sm-2 control-label">CPF</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="input-federal-id"
-                                   placeholder="Porque a lei exige" value="123.456.789-91" name="firstname">
+                                   placeholder="Porque a lei exige" name="federalId"
+                                   value="<%out.print(user.getFederalId() != null ? user.getFederalId() : "");%>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="input-dob" class="col-sm-2 control-label">Data de Nascimento</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" id="input-dob" placeholder="ex. 01/01/2020" value="1987-04-27"
-                                   name="fax">
+                            <input type="date" class="form-control" id="input-dob" placeholder="ex. 01/01/2020"
+                                   name="dob"
+                                   value="<%out.print(user.getBirthday() != null ? user.getBirthday() : "");%>">
                         </div>
                     </div>
                     <div class="form-group required">
                         <label for="input-area-code" class="col-sm-2 control-label">DDD*</label>
                         <div class="col-sm-2">
-                            <input type="tel" class="form-control" id="input-area-code" placeholder="ex. (11)" value="11"
-                                   name="telephone">
+                            <input type="tel" class="form-control" id="input-area-code" placeholder="ex. (11)"
+                                   name="areacode"
+                                   value="<%out.print(user.getAreaCode() != null ? user.getAreaCode() : "");%>">
                         </div>
                         <label for="input-telephone" class="col-sm-2 control-label">Telefone*</label>
                         <div class="col-sm-6">
                             <input type="tel" class="form-control" id="input-telephone" placeholder="ex. 9 9999-9999"
-                                   value="9 1234-5678" name="telephone">
+                                   name="phone"
+                                   value="<%out.print(user.getPhone() != null ? user.getPhone() : "");%>">
                         </div>
                     </div>
 
                 <div class="m-t-40"></div>
                 <div class="buttons clearfix">
-<%--                    <div class="col-sm-"></div>--%>
-<%--                    <div class="col-sm-10">--%>
-<%--    <div class="m-l-30 m-r-30 col-sm-10">--%>
-                    <div class="pull-left"><a href="index.jsp" class="btn btn-default">Cancelar</a></div>
                     <div class="pull-right">
                         <input type="submit" value="Salvar" class="btn btn-primary" />
                     </div>

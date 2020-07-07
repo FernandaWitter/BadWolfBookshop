@@ -17,7 +17,7 @@ public class BookSearchPostProcessAuthors implements IStrategy {
         Book book = (Book) object;
         bookDAO.findAuthors(book, result);
         ArrayList<Author> authors = new ArrayList<>();
-        for(DomainObject d : result.getObject(Author.class.getSimpleName())) {
+        for (DomainObject d : result.getObject(Author.class.getSimpleName())) {
             authorDAO.findById(d, result);
             Author a = (Author) result.getObject(Author.class.getSimpleName()).get(0);
             result.removeObject(Author.class.getSimpleName());

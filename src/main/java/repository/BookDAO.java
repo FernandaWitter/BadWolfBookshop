@@ -2,12 +2,14 @@ package repository;
 
 import config.DBConnection;
 import domain.*;
+import dto.BookChartDTO;
+import dto.BookDTO;
+import dto.ReturnChartDTO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.*;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.*;
 
 public class BookDAO implements IDAO {
     private final String bookTable = "books";
@@ -29,7 +31,7 @@ public class BookDAO implements IDAO {
     private final String isActiveColumn = "bks_is_active";
     private final String bookFields = titleColumn + ", " + publisherIdColumn + ", " + publishingYearColumn + ", " +
             editionColumn + ", " + languageColumn + "," + isbnColumn + ", " + summaryColumn + ", " + heightColumn + ", " +
-            widthColumn + ", " + depthColumn + ", " + weightColumn + ", " + priceColumn + ", " + inStockColumn + ", "+
+            widthColumn + ", " + depthColumn + ", " + weightColumn + ", " + priceColumn + ", " + inStockColumn + ", " +
             pagesColumn + ", " + isActiveColumn;
 
     // Book-Author Relational Table
@@ -86,7 +88,7 @@ public class BookDAO implements IDAO {
 
                 // Store images
                 BookImageDAO imageDAO = new BookImageDAO();
-                for(Image i : book.getImages()){
+                for (Image i : book.getImages()) {
                     i.setBook(bookId);
                     imageDAO.create(i, result);
                 }
@@ -103,7 +105,7 @@ public class BookDAO implements IDAO {
                 }
 
                 // Associate Categories
-                for (Category c : book.getCategories()){
+                for (Category c : book.getCategories()) {
                     String authorsSql = "INSERT INTO " + booksCategoriesTable + "(" + bookCategoriesBookId + ", " +
                             booksCategoriesCategoryId + ") VALUES (?, ?)";
                     pstm = conn.prepareStatement(authorsSql);
@@ -156,13 +158,13 @@ public class BookDAO implements IDAO {
                 imageDAO.findActive(book, result);
 
                 // To diminish processing expenditure, delete all old images and save current ones as new
-                if(result.getObject(Image.class.getSimpleName()) != null) {
+                if (result.getObject(Image.class.getSimpleName()) != null) {
                     ArrayList<DomainObject> oldImages = result.getObject(Image.class.getSimpleName());
                     for (DomainObject d : oldImages) {
                         imageDAO.delete(d, result);
                     }
                 }
-                for(Image i : book.getImages()){
+                for (Image i : book.getImages()) {
                     i.setBook(book.getId());
                     imageDAO.create(i, result);
                 }
@@ -189,7 +191,7 @@ public class BookDAO implements IDAO {
                 pstm.setInt(1, book.getId());
                 pstm.execute();
 
-                for (Category c : book.getCategories()){
+                for (Category c : book.getCategories()) {
                     String authorsSql = "INSERT INTO " + booksCategoriesTable + "(" + bookCategoriesBookId + ", " +
                             booksCategoriesCategoryId + ") VALUES (?, ?)";
                     pstm = conn.prepareStatement(authorsSql);
@@ -208,18 +210,18 @@ public class BookDAO implements IDAO {
     @Override
     public void delete(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null)
+        if (conn == null)
             result.setMsg("error", "Connection Error");
         else {
-            try{
-                Book book = (Book)object;
-                String sql = "UPDATE "+ bookTable + " SET " + isActiveColumn +" = false WHERE " + bookIdColumn +"= ?";
+            try {
+                Book book = (Book) object;
+                String sql = "UPDATE " + bookTable + " SET " + isActiveColumn + " = false WHERE " + bookIdColumn + "= ?";
                 PreparedStatement pstm = conn.prepareStatement(sql);
 
                 pstm.setInt(1, book.getId());
 
                 pstm.execute();
-            } catch (Exception e){
+            } catch (Exception e) {
                 result.setMsg("error", "N&atilde;o foi poss&iacute;vel salvar o livro. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
             }
         }
@@ -229,11 +231,11 @@ public class BookDAO implements IDAO {
     @Override
     public void findAll(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
-                Book book = (Book)object;
+                Book book = (Book) object;
 
                 // find matching authors
                 String findAuthorsSql = "SELECT " + booksAuthorsBookColumn + " FROM " + booksAuthorsTable + " WHERE " +
@@ -241,22 +243,13 @@ public class BookDAO implements IDAO {
                 PreparedStatement pstm = conn.prepareStatement(findAuthorsSql);
                 ResultSet rs = pstm.executeQuery();
                 ArrayList<Integer> authors = new ArrayList<>();
-                while(rs.next()){
+                while (rs.next()) {
                     authors.add(new Integer(rs.getInt(booksAuthorsBookColumn)));
                 }
 
-                // find matching categories
-//                String findCategoreisSql = "SELECT " + bookCategoriesBookId + " FROM " + booksCategoriesTable + " WHERE " + getCategoryFilter();
-//                pstm = conn.prepareStatement(findCategoreisSql);
-//                rs = pstm.executeQuery();
-                ArrayList<Integer> categories = new ArrayList<>();
-//                while(rs.next()){
-//                    categories.add(new Integer(rs.getInt(bookCategoriesBookId)));
-//                }
-
-                String bookSql = "SELECT ("+ bookFields + ", "+ publisherName +")  FROM " + bookTable +
-                        " INNER JOIN "+ publisherTable + " ON " + publisherId + "=" + publisherIdColumn +
-                        " WHERE " + getBookFilters(book, authors, categories);
+                String bookSql = "SELECT (" + bookFields + ", " + publisherName + ")  FROM " + bookTable +
+                        " INNER JOIN " + publisherTable + " ON " + publisherId + "=" + publisherIdColumn +
+                        " WHERE " + getBookFilters(book, authors);
                 pstm = conn.prepareStatement(bookSql);
 
                 ArrayList<DomainObject> searchResult = new ArrayList<>();
@@ -288,14 +281,14 @@ public class BookDAO implements IDAO {
                 }
 
                 // Return Author codes
-                for(DomainObject d : searchResult) {
-                    Book b = (Book)d;
+                for (DomainObject d : searchResult) {
+                    Book b = (Book) d;
                     String findAuthors = "SELECT " + booksAuthorsAuthorColumn + " FROM " + booksAuthorsTable +
-                            " WHERE " + booksAuthorsBookColumn + "=" +b.getId() + ";";
+                            " WHERE " + booksAuthorsBookColumn + "=" + b.getId() + ";";
                     pstm = conn.prepareStatement(findAuthors);
                     rs = pstm.executeQuery();
                     ArrayList<Author> bookAuthors = new ArrayList<>();
-                    while(rs.next()){
+                    while (rs.next()) {
                         Author a = new Author();
                         a.setId(rs.getInt(booksAuthorsAuthorColumn));
                         bookAuthors.add(a);
@@ -304,14 +297,14 @@ public class BookDAO implements IDAO {
                 }
 
                 // Return Category codes
-                for(DomainObject d : searchResult) {
-                    Book b = (Book)d;
+                for (DomainObject d : searchResult) {
+                    Book b = (Book) d;
                     String findCategory = "SELECT " + booksCategoriesCategoryId + " FROM " + booksCategoriesTable +
                             " WHERE " + bookCategoriesBookId + "=" + b.getId() + ";";
                     pstm = conn.prepareStatement(findCategory);
                     rs = pstm.executeQuery();
                     ArrayList<Category> bookCategories = new ArrayList<>();
-                    while(rs.next()){
+                    while (rs.next()) {
                         Category c = new Category();
                         c.setId(rs.getInt(booksAuthorsAuthorColumn));
                         bookCategories.add(c);
@@ -329,17 +322,17 @@ public class BookDAO implements IDAO {
     @Override
     public void findActive(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
-                Book book = (Book)object;
+                Book book = (Book) object;
                 PreparedStatement pstm;
                 ResultSet rs;
                 // find matching authors
-                String authorFilters =  getAuthorsFilter(book);
+                String authorFilters = getAuthorsFilter(book);
                 ArrayList<Integer> authors = new ArrayList<>();
-                if(authorFilters != null && !authorFilters.equals("")) {
+                if (authorFilters != null && !authorFilters.equals("")) {
                     String findAuthorsSql = "SELECT " + booksAuthorsBookColumn + " FROM " + booksAuthorsTable + authorFilters;
                     pstm = conn.prepareStatement(findAuthorsSql);
                     rs = pstm.executeQuery();
@@ -347,20 +340,12 @@ public class BookDAO implements IDAO {
                         authors.add(new Integer(rs.getInt(booksAuthorsBookColumn)));
                     }
                 }
-                // find matching categories
-//                String findCategoreisSql = "SELECT " + bookCategoriesBookId + " FROM " + booksCategoriesTable + " WHERE " + getCategoryFilter();
-//                pstm = conn.prepareStatement(findCategoreisSql);
-//                rs = pstm.executeQuery();
-                ArrayList<Integer> categories = new ArrayList<>();
-//                while(rs.next()){
-//                    categories.add(new Integer(rs.getInt(bookCategoriesBookId)));
-//                }
 
-                String bookSql =  "SELECT "+ bookFields + ", "+ publisherName + "," + bookIdColumn + " FROM " + bookTable +
-                        " INNER JOIN "+ publisherTable + " ON " + publisherId + "=" + publisherIdColumn +
+                String bookSql = "SELECT " + bookFields + ", " + publisherName + "," + bookIdColumn + " FROM " + bookTable +
+                        " INNER JOIN " + publisherTable + " ON " + publisherId + "=" + publisherIdColumn +
                         " WHERE " + isActiveColumn + " = true";
-                String filters = getBookFilters(book, authors, categories);
-                if(filters != null && !filters.equals(""))
+                String filters = getBookFilters(book, authors);
+                if (filters != null && !filters.equals(""))
                     bookSql += " AND " + filters;
                 bookSql += ";";
                 pstm = conn.prepareStatement(bookSql);
@@ -395,11 +380,11 @@ public class BookDAO implements IDAO {
 
                 // Recover Images
                 BookImageDAO imageDAO = new BookImageDAO();
-                for(DomainObject d : searchResult){
-                    Book b = (Book)d;
+                for (DomainObject d : searchResult) {
+                    Book b = (Book) d;
                     imageDAO.findActive(b, result);
                     ArrayList<Image> images = new ArrayList<>();
-                    if(result.getObject(Image.class.getSimpleName()) != null) {
+                    if (result.getObject(Image.class.getSimpleName()) != null) {
                         for (DomainObject o : result.getObject(Image.class.getSimpleName())) {
                             Image i = (Image) o;
                             images.add(i);
@@ -414,13 +399,13 @@ public class BookDAO implements IDAO {
         }
     }
 
-    public void findAuthors(DomainObject object, Result result){
+    public void findAuthors(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
-                Book book = (Book)object;
+                Book book = (Book) object;
                 String sql = "SELECT " + booksAuthorsAuthorColumn + " FROM " + booksAuthorsTable +
                         " WHERE " + booksAuthorsBookColumn + " = ?";
                 PreparedStatement pstm = conn.prepareStatement(sql);
@@ -428,7 +413,7 @@ public class BookDAO implements IDAO {
                 ResultSet rs = pstm.executeQuery();
 
                 ArrayList<DomainObject> authors = new ArrayList<>();
-                while(rs.next()){
+                while (rs.next()) {
                     Author a = new Author();
                     a.setId(rs.getInt(booksAuthorsAuthorColumn));
                     authors.add(a);
@@ -440,13 +425,13 @@ public class BookDAO implements IDAO {
         }
     }
 
-    public void findCategories(DomainObject object, Result result){
+    public void findCategories(DomainObject object, Result result) {
         Connection conn = new DBConnection().getConnection();
-        if(conn == null) {
+        if (conn == null) {
             result.setMsg("error", "Connection Error");
         } else {
             try {
-                Book book = (Book)object;
+                Book book = (Book) object;
                 String sql = "SELECT " + booksCategoriesCategoryId + " FROM " + booksCategoriesTable +
                         " WHERE " + bookCategoriesBookId + " = ?";
                 PreparedStatement pstm = conn.prepareStatement(sql);
@@ -454,7 +439,7 @@ public class BookDAO implements IDAO {
                 ResultSet rs = pstm.executeQuery();
 
                 ArrayList<DomainObject> categories = new ArrayList<>();
-                while(rs.next()){
+                while (rs.next()) {
                     Category c = new Category();
                     c.setId(rs.getInt(booksCategoriesCategoryId));
                     categories.add(c);
@@ -466,40 +451,32 @@ public class BookDAO implements IDAO {
         }
     }
 
-    private String getBookFilters(Book book, ArrayList<Integer> authors, ArrayList<Integer> categories){
+    private String getBookFilters(Book book, ArrayList<Integer> authors) {
         String filters = "";
         // Search matching Publishers
-        if(book.getPublisher() != null && book.getPublisher().getId() != null){
+        if (book.getPublisher() != null && book.getPublisher().getId() != null) {
             filters += publisherIdColumn + "=" + book.getPublisher().getId();
         }
         // Search matching Authors
-        if(authors.size()>0){
-            for(Integer a : authors) {
+        if (authors.size() > 0) {
+            for (Integer a : authors) {
                 if (filters.length() > 0) {
                     filters += " OR ";
                 }
                 filters += bookIdColumn + " = " + a.toString();
             }
         }
-        // Search Matching categories
-//        if(categories.size() > 0){
-//            for(Integer c : categories) {
-//                if (filters.length() > 0) {
-//                    filters += " OR ";
-//                }
-//                filters += bookIdColumn + " = " + c.toString();
-//            }
-//        }
+
         if (filters.length() > 0) {
             filters += " OR ";
         }
-        if(book.getTitle() != null) {
+        if (book.getTitle() != null) {
             // Search book title
             filters += titleColumn + " ILIKE \'%" + book.getTitle() + "%\'";
             // Search book ISBN
             filters += " OR " + isbnColumn + " ILIKE \'%" + book.getTitle() + "%\'";
         }
-        if(book.getId() != null){
+        if (book.getId() != null) {
             if (filters.length() > 0) {
                 filters += " OR ";
             }
@@ -507,9 +484,10 @@ public class BookDAO implements IDAO {
         }
         return filters;
     }
-    private String getAuthorsFilter(Book book){
+
+    private String getAuthorsFilter(Book book) {
         String filters = "";
-        if(book.getAuthors() != null) {
+        if (book.getAuthors() != null) {
             for (Author a : book.getAuthors()) {
                 if (a.getId() != null) {
                     if (filters.length() == 0)
@@ -524,14 +502,154 @@ public class BookDAO implements IDAO {
         return filters;
     }
 
-//    private String CategoreisFilter(Book book){
-//        String filters = "";
-//        for(Category c : book.getCategories()){
-//            if(filters.length() > 0){
-//                filters += " OR ";
-//            }
-//            filters += booksCategoriesCategoryId + "=" + c.getId();
-//        }
-//        return filters;
-//    }
+    public void generalSearch(BookDTO book, Result result) {
+        Connection conn = new DBConnection().getConnection();
+        if (conn == null) {
+            result.setMsg("error", "Connection Error");
+        } else {
+            try {
+                String findSql = "SELECT DISTINCT ON(" + bookIdColumn + ") "
+                        + bookIdColumn + ", " + titleColumn + ", " + priceColumn + ", img_path "
+                        + " FROM " + bookTable
+                        + " JOIN " + booksAuthorsTable + " ON " + bookIdColumn + " = " + booksAuthorsBookColumn
+                        + " JOIN authors ON " + booksAuthorsAuthorColumn + " = aut_id"
+                        + " JOIN " + booksCategoriesTable + " ON " + bookIdColumn + " = " + bookCategoriesBookId
+                        + " JOIN categories ON " + booksCategoriesCategoryId + " = cat_id"
+                        + " JOIN (SELECT DISTINCT ON(img_bks_id) img_path, img_bks_id"
+                        + " FROM book_images "
+                        + " WHERE img_is_active = true"
+                        + ") AS image ON " + bookIdColumn + " = img_bks_id"
+                        + " WHERE " + titleColumn + " ILIKE ? OR " + isbnColumn + " ILIKE ? "
+                        + " OR aut_name ILIKE ? OR cat_name ILIKE ?";
+                PreparedStatement pstm = conn.prepareStatement(findSql);
+
+                pstm.setString(1, "%" + book.getTitle() + "%");
+                pstm.setString(2, "%" + book.getTitle() + "%");
+                pstm.setString(3, "%" + book.getTitle() + "%");
+                pstm.setString(4, "%" + book.getTitle() + "%");
+
+                ResultSet rs = pstm.executeQuery();
+
+                ArrayList<DomainObject> searchResult = new ArrayList<>();
+
+                while (rs.next()) {
+                    BookDTO b = new BookDTO();
+                    b.setId(rs.getInt(bookIdColumn));
+                    b.setPrice(rs.getDouble(priceColumn));
+                    b.setTitle(rs.getString(titleColumn));
+                    b.setImagePath(rs.getString("img_path"));
+                    searchResult.add(b);
+                }
+                result.putObject(BookDTO.class.getSimpleName(), searchResult);
+            } catch (Exception e) {
+                result.setMsg("error", "N&atilde;o foi poss&iacute;vel realizar a busca. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
+            }
+        }
+    }
+
+    public void getChartData(DomainObject object, Result result) {
+        Connection conn = new DBConnection().getConnection();
+        if (conn == null) {
+            result.setMsg("error", "Connection Error");
+        } else {
+            try {
+                BookChartDTO dto = (BookChartDTO) object;
+                String catsql = "SELECT cat_name FROM categories";
+                PreparedStatement pstm = conn.prepareStatement(catsql);
+                ResultSet rs = pstm.executeQuery();
+                while (rs.next()) {
+                    dto.addCategory(rs.getString("cat_name"));
+                }
+
+                String sql = "WITH a as" +
+                        " (SELECT DISTINCT ON (week)" +
+                        " extract(week FROM ord_date) AS week," +
+                        " ord_date" +
+                        " FROM user_order)," +
+                        " b AS " +
+                        " (SELECT sum(oit_quantity) AS qty," +
+                        " cat_name," +
+                        " extract(week FROM ord_date) AS weekly" +
+                        " FROM user_order" +
+                        " JOIN order_item ON ord_id = oit_ord_id" +
+                        " JOIN book_categories ON oit_bks_id = bkc_bks_id" +
+                        " JOIN categories ON bkc_cat_id = cat_id" +
+                        " GROUP BY weekly, cat_name)" +
+                        " SELECT" +
+                        " a.week AS week," +
+                        " a.ord_date AS ord_date," +
+                        " b.qty AS amount," +
+                        " b.cat_name AS cat_name" +
+                        " FROM a JOIN b ON a.week = b.weekly" +
+                        " WHERE ord_date BETWEEN ? AND ?" +
+                        " ORDER BY ord_date";
+                pstm = conn.prepareStatement(sql);
+
+                LocalDate start, end;
+                end = LocalDate.now();
+                start = end.minusMonths(3);
+                if (dto.getStartDate() != null) {
+                    start = dto.getStartDate();
+                }
+                if (dto.getEndDate() != null) {
+                    end = dto.getEndDate();
+                }
+
+                pstm.setDate(1, Date.valueOf(start));
+                pstm.setDate(2, Date.valueOf(end));
+
+                rs = pstm.executeQuery();
+
+                HashMap<String, Integer> data = new HashMap<>();
+                String date = null;
+                int week = 0;
+                while (rs.next()) {
+                    String curDate = rs.getString("ord_date");
+                    int curWeek = rs.getInt("week");
+                    if (date == null) {
+                        date = curDate;
+                        week = curWeek;
+                        for (String s : dto.getFoundCategories()) {
+                            data.put(s, 0);
+                        }
+                    } else if (week != curWeek) {
+                        dto.addResult(date, data);
+                        data = new HashMap<>();
+                        for (String s : dto.getFoundCategories()) {
+                            data.put(s, 0);
+                        }
+                        date = curDate;
+                        week = curWeek;
+                    }
+                    String category = rs.getString("cat_name");
+                    int amount = rs.getInt("amount");
+                    data.replace(category, amount);
+                }
+
+                String orderSql = "WITH order_count AS" +
+                        " (SELECT" +
+                        " count(ord_id) AS amount," +
+                        " CASE WHEN ord_sts_id IN (1,2,3) THEN 'Aberto'" +
+                        " WHEN ord_sts_id = 4 THEN 'Concluído'" +
+                        " WHEN ord_sts_id IN (5,6,7) THEN 'Troca'" +
+                        " WHEN ord_sts_id IN (8, 9, 14) THEN 'Devolução'" +
+                        " ELSE 'Cancelado' END AS status" +
+                        " FROM user_order" +
+                        " GROUP BY ord_sts_id)" +
+                        " SELECT sum(amount) AS amount, status FROM order_count GROUP BY status";
+                pstm = conn.prepareStatement(orderSql);
+                rs = pstm.executeQuery();
+
+                ReturnChartDTO returnChartDTO = new ReturnChartDTO();
+                while (rs.next()) {
+                    returnChartDTO.addStatus(rs.getString("status"), rs.getInt("amount"));
+                }
+
+                result.putObject(BookChartDTO.class.getSimpleName(), dto);
+                result.putObject(ReturnChartDTO.class.getSimpleName(), returnChartDTO);
+            } catch (Exception e) {
+                result.setMsg("error", "N&atilde;o foi poss&iacute;vel realizar a busca. Verifique os campos e tente novamente, ou entre em contato com o administrador do sistema.");
+            }
+        }
+    }
 }

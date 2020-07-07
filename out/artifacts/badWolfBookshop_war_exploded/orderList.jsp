@@ -1,3 +1,8 @@
+<%@ page import="domain.Result" %>
+<%@ page import="domain.Order" %>
+<%@ page import="domain.DomainObject" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +26,9 @@
     <script type="text/javascript" src="resources/javascript/common.js"></script>
     <script type="text/javascript" src="resources/javascript/global.js"></script>
     <script type="text/javascript" src="resources/javascript/owl-carousel/owl.carousel.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
 </head>
 <body class="col-2 left-col">
 <div class="preloader loader" style="display: block;"><img src="resources/image/loader-circle.gif" alt="#"/></div>
@@ -30,7 +38,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="top-left pull-left">
-                        <div class="wel-come-msg" style="font-size: 24px"><a href="#"><img
+                        <div class="wel-come-msg" style="font-size: 24px"><a href="index.jsp"><img
                                 src="resources/image/logo_black_small.jpg" title="Bad Wolf Bookshop"
                                 alt="Bad Wolf Bookshop Logo" class="img-responsive"/></a></div>
                     </div>
@@ -89,50 +97,22 @@
 <%--        <li><a href="register.html">Register</a></li>--%>
 <%--    </ul>--%>
 <%--</div>--%>
+
+<%
+    Result result;
+    if(request.getAttribute("result") != null)
+        result = (Result) request.getAttribute("result");
+    else
+        result = new Result();
+%>
 <div class="container">
     <div class="row">
         <div class="container" style="height:40px;"></div>
         <div class="center-block" id="content">
             <h2 class="text-center m-b-20">Listagem de Pedidos</h2>
-            <div class="category-page-wrapper">
-                <div class="col-md-2 text-right sort-wrapper">
-                    <label class="control-label" for="input-sort">Ordenar :</label>
-                    <div class="sort-inner">
-                        <select id="input-sort" class="form-control">
-                            <option value="ASC" selected="selected">Mais Recentes</option>
-                            <option value="ASC">Mais Antigos</option>
-                            <option value="ASC">Cliente (A - Z)</option>
-                            <option value="DESC">Cliente (Z - A)</option>
-                            <option value="ASC">Valor (Maior > Menor)</option>
-                            <option value="ASC">Valor (Menor > Maior)</option>
-                            <option value="DESC">Status</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-1 text-right page-wrapper">
-                    <label class="control-label" for="input-limit">Exibir :</label>
-                    <div class="limit">
-                        <select id="input-limit" class="form-control">
-                            <option value="8" selected="selected">15</option>
-                            <option value="25">30</option>
-                            <option value="50">50</option>
-                            <option value="75">100</option>
-                            <option value="100">Todos</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 pull-right">
-                    <form>
-                        <input id="searchProduct" type="text" class="col-sm-4 input-lg col-sm-offset-3"
-                               style="box-shadow: 0 0 2px #189b79 !important;">
-                        <button class="btn btn-primary col-sm-4 pull-right">Buscar</button>
-                        <label for="searchProduct" hidden>Caixa de Busca</label>
-                    </form>
-                </div>
-            </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="dataTable">
                 <thead>
                 <tr>
                     <td class="text-center">Pedido</td>
@@ -144,41 +124,53 @@
                 </tr>
                 </thead>
                 <tbody>
-                <%for (int i = 0; i < 15; i++) {%>
-                <tr>
-                    <td class="text-center"><strong>#123ABC456</strong></td>
-                    <td class="text-left"><a href="bookDetail.jsp">Cliente Principal</a></td>
-                    <td class="text-left">25/01/2020</td>
-                    <td class="text-right">$54.00</td>
-                    <%if (i % 3 == 1) {%>
-                    <td class="text-center"><span class="label label-danger m-r-20 ">Troca/Devolu&ccedil;&atilde;o</span></td>
-                    <%} else if (i % 4 == 1) {%>
-                    <td class="text-center"><span class="label label-warning m-r-20 ">Pendente</span></td>
-                    <%} else if (i % 5 == 1) {%>
-                    <td class="text-center"><span class="label label-primary m-r-20 ">Em Tr&acirc;nsito</span></td>
-                    <%} else {%>
-                    <td class="text-center"><span class="label label-success m-r-20 ">Aberto</span></td>
-                    <%}%>
-                    <td class="text-center"><a class="btn btn-primary" href="orderDetail.jsp"><i class="fa fa-edit"></i> </a></td>
-                </tr>
-                <%}%>
+                <%if(result.hasObject(Order.class.getSimpleName())) {
+                    List<DomainObject> orders = result.getObject(Order.class.getSimpleName());
+                    for (DomainObject d : orders) {
+                        Order order = (Order) d;
+                        out.print("<tr>");
+                        out.print("<td class=\"text-center\"><strong>#" + order.getId() + "</strong></td>");
+                        out.print("<td class=\"text-left\">" + order.getUser().getName() + "</td>");
+                        out.print("<td class=\"text-left\">" + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(order.getCreation()) + "</td>");
+                        out.print("<td class=\"text-right\">$" + String.format("%.2f", order.getOrderTotal()) + "</td>");
+                        String label = "";
+                        switch (order.getStatus().getCode()) {
+                            case 1:
+                                label = "label-success";
+                                break;
+                            case 2:
+                                label = "label-primary";
+                                break;
+                            case 11:
+                                label = "label-warning";
+                                break;
+                            case 3:
+                            case 6:
+                                label = "label-info";
+                                break;
+                            case 5:
+                            case 8:
+                            case 10:
+                                label = "label-danger";
+                                break;
+                            default:
+                                label = "label-default";
+                                break;
+                        }
+                        out.print("<td class=\"text-center\"><span class=\"label " + label + " m-r-20 \">" + order.getStatus().getTitle() + "</span></td>");
+                        out.print("<td class=\"text-center\">");
+                        out.print("<form method=\"post\" action=\"editPurchase\">");
+                        out.print("<button type=\"submit\" class=\"btn btn-primary\" id=\"editOrder" + order.getId() + "\"><i class=\"fa fa-edit\"></i> </button>");
+                        out.print("<input type=\"hidden\" value=\"" + order.getId() + "\" name=\"orderId\">");
+                        out.print("</form>");
+                        out.print("</td>");
+                        out.print("</tr>");
+                    }
+                }
+                %>
                 </tbody>
             </table>
 
-        </div>
-        <div class="category-page-wrapper">
-            <div class="result-inner">Exibindo 1 a 15 de 245 (17 P&aacute;ginas)</div>
-            <div class="pagination-inner">
-                <ul class="pagination">
-                    <li class="active"><span>1</span></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">...</a></li>
-                    <li><a href="#">17</a></li>
-                    <li><a href="#">&gt;</a></li>
-                    <li><a href="#">&gt;|</a></li>
-                </ul>
-            </div>
         </div>
     </div>
 </div>
@@ -191,5 +183,14 @@
     </div>
     <a id="scrollup">Scroll</a>
 </footer>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Portuguese-Brasil.json"
+            }
+        });
+    });
+</script>
 </body>
 </html>

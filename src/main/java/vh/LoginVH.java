@@ -69,6 +69,7 @@ public class LoginVH implements IViewHelper {
                     break;
                 case "logout":
                     response.sendRedirect("index.jsp");
+                    break;
                 default:
                     dispatcher = request.getRequestDispatcher("/home.jsp");
                     dispatcher.forward(request, response);
